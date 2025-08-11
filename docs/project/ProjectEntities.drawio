@@ -1,0 +1,68 @@
+<mxfile host="drawio-plugin" agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36" modified="2025-08-10T18:26:40.052Z" version="22.1.22" etag="sQaa0NKeGp4ETsRCoqth" type="embed">
+  <diagram name="Страница — 1" id="s_IIw7foGjx99Uhm-xEC">
+    <mxGraphModel dx="1239" dy="348" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="c-VijKlDoPQ8IT3EWTao-1" value="Project" style="swimlane;childLayout=stackLayout;horizontal=1;startSize=50;horizontalStack=0;rounded=1;fontSize=14;fontStyle=0;strokeWidth=2;resizeParent=0;resizeLast=1;shadow=0;dashed=0;align=center;arcSize=4;whiteSpace=wrap;html=1;fillColor=#e51400;fontColor=#ffffff;strokeColor=#B20000;" parent="1" vertex="1">
+          <mxGeometry x="299" y="40" width="230" height="230" as="geometry" />
+        </mxCell>
+        <mxCell id="c-VijKlDoPQ8IT3EWTao-2" value="+ id: Long&lt;br&gt;+ name: String&lt;br&gt;+ description: String&lt;div&gt;+ status: String&lt;/div&gt;&lt;div&gt;+ startDate: Date&lt;/div&gt;&lt;div&gt;+ endDate: Date&lt;/div&gt;&lt;div&gt;+ createdAt: LocalDateTime&lt;/div&gt;&lt;div&gt;+ updatedAt: LocalDateTime&lt;/div&gt;&lt;div&gt;+ createdBy: Long&lt;/div&gt;&lt;div&gt;+ teamId: Long&lt;/div&gt;&lt;div&gt;+ List&amp;lt;ProjectAttachment&amp;gt;&lt;/div&gt;" style="align=left;strokeColor=none;fillColor=none;spacingLeft=4;spacingRight=4;fontSize=12;verticalAlign=top;resizable=0;rotatable=0;part=1;html=1;whiteSpace=wrap;" parent="c-VijKlDoPQ8IT3EWTao-1" vertex="1">
+          <mxGeometry y="50" width="230" height="180" as="geometry" />
+        </mxCell>
+        <mxCell id="c-VijKlDoPQ8IT3EWTao-14" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" parent="c-VijKlDoPQ8IT3EWTao-1" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="115" y="260" as="sourcePoint" />
+            <mxPoint x="115" y="260" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="c-VijKlDoPQ8IT3EWTao-16" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" parent="c-VijKlDoPQ8IT3EWTao-1" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="115" y="260" as="sourcePoint" />
+            <mxPoint x="115" y="260" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="c-VijKlDoPQ8IT3EWTao-17" value="ProjectMember" style="swimlane;childLayout=stackLayout;horizontal=1;startSize=50;horizontalStack=0;rounded=1;fontSize=14;fontStyle=0;strokeWidth=2;resizeParent=0;resizeLast=1;shadow=0;dashed=0;align=center;arcSize=4;whiteSpace=wrap;html=1;fillColor=#e51400;fontColor=#ffffff;strokeColor=#B20000;" parent="1" vertex="1">
+          <mxGeometry y="290" width="210" height="200" as="geometry" />
+        </mxCell>
+        <mxCell id="c-VijKlDoPQ8IT3EWTao-18" value="+ id: Long&lt;div&gt;&lt;br&gt;&lt;div&gt;+ projectId: Long&lt;/div&gt;&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;+ userId: Long&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;+ ProjectRole: String&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;+ joinedAt: LocalDateTime&lt;/div&gt;" style="align=left;strokeColor=none;fillColor=none;spacingLeft=4;spacingRight=4;fontSize=12;verticalAlign=top;resizable=0;rotatable=0;part=1;html=1;whiteSpace=wrap;" parent="c-VijKlDoPQ8IT3EWTao-17" vertex="1">
+          <mxGeometry y="50" width="210" height="150" as="geometry" />
+        </mxCell>
+        <mxCell id="c-VijKlDoPQ8IT3EWTao-26" value="" style="edgeStyle=entityRelationEdgeStyle;fontSize=12;html=1;endArrow=ERoneToMany;rounded=0;exitX=0;exitY=0.133;exitDx=0;exitDy=0;exitPerimeter=0;entryX=1;entryY=0.25;entryDx=0;entryDy=0;" parent="1" source="c-VijKlDoPQ8IT3EWTao-1" target="c-VijKlDoPQ8IT3EWTao-18" edge="1">
+          <mxGeometry width="100" height="100" relative="1" as="geometry">
+            <mxPoint x="260" y="140" as="sourcePoint" />
+            <mxPoint x="250" y="400" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="c-VijKlDoPQ8IT3EWTao-27" value="ProjectTag" style="swimlane;childLayout=stackLayout;horizontal=1;startSize=50;horizontalStack=0;rounded=1;fontSize=14;fontStyle=0;strokeWidth=2;resizeParent=0;resizeLast=1;shadow=0;dashed=0;align=center;arcSize=4;whiteSpace=wrap;html=1;fillColor=#e51400;fontColor=#ffffff;strokeColor=#B20000;" parent="1" vertex="1">
+          <mxGeometry x="650" y="300" width="160" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="c-VijKlDoPQ8IT3EWTao-28" value="+ id: Long&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;+ name: String&lt;/div&gt;" style="align=left;strokeColor=none;fillColor=none;spacingLeft=4;spacingRight=4;fontSize=12;verticalAlign=top;resizable=0;rotatable=0;part=1;html=1;whiteSpace=wrap;" parent="c-VijKlDoPQ8IT3EWTao-27" vertex="1">
+          <mxGeometry y="50" width="160" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="c-VijKlDoPQ8IT3EWTao-29" value="" style="edgeStyle=entityRelationEdgeStyle;fontSize=12;html=1;endArrow=ERmany;startArrow=ERmany;rounded=0;entryX=-0.012;entryY=0.333;entryDx=0;entryDy=0;entryPerimeter=0;" parent="1" target="c-VijKlDoPQ8IT3EWTao-27" edge="1">
+          <mxGeometry width="100" height="100" relative="1" as="geometry">
+            <mxPoint x="530" y="68" as="sourcePoint" />
+            <mxPoint x="460" y="250" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="c-VijKlDoPQ8IT3EWTao-30" value="ProjectAttachment" style="swimlane;childLayout=stackLayout;horizontal=1;startSize=50;horizontalStack=0;rounded=1;fontSize=14;fontStyle=0;strokeWidth=2;resizeParent=0;resizeLast=1;shadow=0;dashed=0;align=center;arcSize=4;whiteSpace=wrap;html=1;fillColor=#e51400;fontColor=#ffffff;strokeColor=#B20000;" parent="1" vertex="1">
+          <mxGeometry x="350" y="340" width="180" height="250" as="geometry" />
+        </mxCell>
+        <mxCell id="c-VijKlDoPQ8IT3EWTao-31" value="+ id: Long&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;+ projectId: Long&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;+ filename: String&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;+ fileSize: Long&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;+ contentType: String&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;+ uploadDate: LocalDateTime&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;&lt;div&gt;+ filePath: String&lt;/div&gt;" style="align=left;strokeColor=none;fillColor=none;spacingLeft=4;spacingRight=4;fontSize=12;verticalAlign=top;resizable=0;rotatable=0;part=1;html=1;whiteSpace=wrap;" parent="c-VijKlDoPQ8IT3EWTao-30" vertex="1">
+          <mxGeometry y="50" width="180" height="200" as="geometry" />
+        </mxCell>
+        <mxCell id="c-VijKlDoPQ8IT3EWTao-40" value="" style="edgeStyle=entityRelationEdgeStyle;fontSize=12;html=1;endArrow=ERoneToMany;rounded=0;entryX=1;entryY=0.25;entryDx=0;entryDy=0;" parent="1" target="c-VijKlDoPQ8IT3EWTao-31" edge="1">
+          <mxGeometry width="100" height="100" relative="1" as="geometry">
+            <mxPoint x="530" y="248" as="sourcePoint" />
+            <mxPoint x="620" y="438" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="594" y="289" />
+              <mxPoint x="880" y="208" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
