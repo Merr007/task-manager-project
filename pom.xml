@@ -26,6 +26,7 @@
 
     <modules>
         <module>project-service</module>
+        <module>db</module>
     </modules>
 
     <properties>
@@ -53,6 +54,11 @@
                 <groupId>org.springdoc</groupId>
                 <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
                 <version>${open-api.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-remote-resources-plugin</artifactId>
+                <version>1.7.0</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

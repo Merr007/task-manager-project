@@ -46,7 +46,7 @@ public class Project {
 
     @ManyToMany
     @JoinTable(
-            name = "project_tags",
+            name = "project_project_tags",
             joinColumns = @JoinColumn(name = "project_id"),
             inverseJoinColumns = @JoinColumn(name = "tag_id")
     )
