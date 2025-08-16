@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                           http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.25.xsd">
+    
+    <changeSet id="release-1.0-project-tables-before" author="vladimir lis">
+        <tagDatabase tag="release-1.0-project-tables-before"/>
+    </changeSet>
+
+    <changeSet id="create-table-projects" author="vladimir lis" context="metamodel">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="projects"/>
+            </not>
+        </preConditions>
+        <createTable tableName="projects">
+            <column name="id" type="bigint" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false" primaryKeyName="pk_projects_id"/>
+            </column>
+            <column name="name" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="description" type="TEXT"/>
+            <column name="status" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="start_date" type="DATE"/>
+            <column name="end_date" type="DATE"/>
+            <column name="created_at" type="TIMESTAMP WITHOUT TIME ZONE"/>
+            <column name="updated_at" type="TIMESTAMP WITHOUT TIME ZONE"/>
+            <column name="team_id" type="bigint"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="create-table-project_members" author="vladimir lis" context="metamodel">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="project_members"/>
+            </not>
+        </preConditions>
+        <createTable tableName="project_members">
+            <column name="id" type="bigint" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false" primaryKeyName="pk_project_members_id"/>
+            </column>
+            <column name="project_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="user_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="role" type="VARCHAR(50)"/>
+            <column name="joined_at" type="TIMESTAMP WITHOUT TIME ZONE"/>
+        </createTable>
+
+        <addForeignKeyConstraint baseTableName="project_members"
+                                 baseColumnNames="project_id"
+                                 constraintName="fk_project_members_project"
+                                 referencedTableName="projects"
+                                 referencedColumnNames="id"/>
+    </changeSet>
+
+    <changeSet id="create-table-project_attachments" author="vladimir lis" context="metamodel">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="project_attachments"/>
+            </not>
+        </preConditions>
+        <createTable tableName="project_attachments">
+            <column name="id" type="bigint" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false" primaryKeyName="pk_project_attachments_id"/>
+            </column>
+            <column name="project_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="filename" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="filesize" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="content_type" type="VARCHAR(255)"/>
+            <column name="upload_date" type="TIMESTAMP WITHOUT TIME ZONE"/>
+            <column name="file_path" type="VARCHAR(1000)"/>
+        </createTable>
+
+        <addForeignKeyConstraint baseTableName="project_attachments"
+                                 baseColumnNames="project_id"
+                                 constraintName="fk_project_attachments_project"
+                                 referencedTableName="projects"
+                                 referencedColumnNames="id"/>
+    </changeSet>
+
+    <changeSet id="create-table-project_tags" author="vladimir lis" context="metamodel">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="project_tags"/>
+            </not>
+        </preConditions>
+        <createTable tableName="project_tags">
+            <column name="id" type="bigint" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false" primaryKeyName="pk_project_tags_id"/>
+            </column>
+            <column name="name" type="VARCHAR(255)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="create-table-project_project_tags" author="vladimir lis" context="metamodel">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="project_project_tags"/>
+            </not>
+        </preConditions>
+        <createTable tableName="project_project_tags">
+            <column name="project_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="project_tag_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addPrimaryKey tableName="project_project_tags" columnNames="project_id, project_tag_id" constraintName="pk_project_project_tags"/>
+
+        <addForeignKeyConstraint baseTableName="project_project_tags"
+                                 baseColumnNames="project_id"
+                                 constraintName="fk_project_project_tags_project"
+                                 referencedTableName="projects"
+                                 referencedColumnNames="id"/>
+
+        <addForeignKeyConstraint baseTableName="project_project_tags"
+                                 baseColumnNames="project_tag_id"
+                                 constraintName="fk_project_project_tags_project_tag"
+                                 referencedTableName="project_tags"
+                                 referencedColumnNames="id"/>
+    </changeSet>
+    
+    <changeSet id="release-1.0-project-tables-applied" author="vladimir lis">
+        <tagDatabase tag="release-1.0-project-tables-applied"/>
+    </changeSet>
+
+</databaseChangeLog>
