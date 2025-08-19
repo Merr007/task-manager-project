@@ -7,5 +7,6 @@
 
     <include file="create-project-tables.xml" relativeToChangelogFile="true"/>
     <include file="create-indexes-project-table.xml" relativeToChangelogFile="true"/>
+    <include file="create-task-table.xml" relativeToChangelogFile="true"/>
 
 </databaseChangeLog>

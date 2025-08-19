@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="
+          http://www.liquibase.org/xml/ns/dbchangelog
+          http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.25.xsd">
+
+    <!-- Тег перед миграцией -->
+    <changeSet id="release-1.0-task-tables-before" author="Anton Kor">
+        <tagDatabase tag="release-1.0-task-tables-before"/>
+    </changeSet>
+
+    <!-- Создание таблицы tasks -->
+    <changeSet id="create-table-tasks" author="Anton Kor" context="metamodel">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="tasks"/>
+            </not>
+        </preConditions>
+        <createTable tableName="tasks">
+            <column name="id" type="bigint" autoIncrement="true">
+                <constraints primaryKey="true"
+                             nullable="false"
+                             primaryKeyName="pk_tasks_id"/>
+            </column>
+            <column name="title" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="description" type="TEXT"/>
+            <column name="status" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="priority" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="due_date" type="DATE"/>
+            <column name="assignee_id" type="bigint"/>
+            <column name="project_id" type="bigint"/>
+            <column name="created_at" type="TIMESTAMP WITHOUT TIME ZONE"
+                    defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_at" type="TIMESTAMP WITHOUT TIME ZONE"
+                    defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <!-- Ограничения для enum-like полей -->
+<!--        <addCheckConstraint tableName="tasks"-->
+<!--                            constraintName="chk_tasks_status"-->
+<!--                            checkConstraint="status IN ('OPEN', 'IN_PROGRESS', 'BLOCKED', 'COMPLETED', 'CANCELLED')"/>-->
+<!--        <addCheckConstraint tableName="tasks"-->
+<!--                            constraintName="chk_tasks_priority"-->
+<!--                            checkConstraint="priority IN ('LOW','MEDIUM','HIGH','CRITICAL')"/>-->
+        <sql splitStatements="false" stripComments="true">
+            ALTER TABLE tasks
+                ADD CONSTRAINT chk_tasks_status
+                    CHECK (status IN ('OPEN', 'IN_PROGRESS', 'BLOCKED', 'COMPLETED', 'CANCELLED'));
+
+            ALTER TABLE tasks
+                ADD CONSTRAINT chk_tasks_priority
+                    CHECK (priority IN ('LOW','MEDIUM','HIGH','CRITICAL'));
+        </sql>
+    </changeSet>
+
+    <!-- Внешние ключи -->
+    <changeSet id="add-foreign-keys-tasks" author="anton">
+        <preConditions onFail="MARK_RAN">
+            <and>
+                <!-- only add FK if referenced tables exist (defensive) -->
+                <tableExists tableName="tasks"/>
+                <tableExists tableName="projects"/>
+            </and>
+        </preConditions>
+
+        <addForeignKeyConstraint baseTableName="tasks"
+                                 baseColumnNames="project_id"
+                                 constraintName="fk_tasks_project"
+                                 referencedTableName="projects"
+                                 referencedColumnNames="id"
+                                 onDelete="CASCADE"/>
+        <!-- Assignee FK: wrap in preCondition so it won't fail if users table is not present -->
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="users"/>
+        </preConditions>
+        <addForeignKeyConstraint baseTableName="tasks"
+                                 baseColumnNames="assignee_id"
+                                 constraintName="fk_tasks_assignee"
+                                 referencedTableName="users"
+                                 referencedColumnNames="id"
+                                 onDelete="SET NULL"/>
+    </changeSet>
+
+    <!-- Индексы -->
+    <changeSet id="add-indexes-tasks" author="anton">
+        <createIndex tableName="tasks" indexName="idx_tasks_assignee">
+            <column name="assignee_id"/>
+        </createIndex>
+        <createIndex tableName="tasks" indexName="idx_tasks_project">
+            <column name="project_id"/>
+        </createIndex>
+        <createIndex tableName="tasks" indexName="idx_tasks_status">
+            <column name="status"/>
+        </createIndex>
+    </changeSet>
+
+    <!-- Триггер для auto-update updated_at -->
+    <changeSet id="trigger-update-tasks-updated-at" author="anton" dbms="postgresql">
+        <sql splitStatements="false">
+            CREATE OR REPLACE FUNCTION set_updated_at()
+                RETURNS TRIGGER AS $$
+            BEGIN
+                NEW.updated_at = now();
+                RETURN NEW;
+            END;
+            $$ LANGUAGE plpgsql;
+
+            CREATE TRIGGER trg_set_updated_at
+                BEFORE UPDATE ON tasks
+                FOR EACH ROW
+            EXECUTE FUNCTION set_updated_at();
+        </sql>
+    </changeSet>
+
+    <!-- Тег после миграции -->
+    <changeSet id="release-1.0-task-tables-applied" author="Anton Kor">
+        <tagDatabase tag="release-1.0-task-tables-applied"/>
+    </changeSet>
+
+</databaseChangeLog>
