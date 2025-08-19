@@ -1,0 +1,59 @@
+version: "3.9"
+services:
+  db:
+    image: postgres:${POSTGRES_VERSION}
+    container_name: postgres_db
+    restart: always
+    ports:
+      - "5432:5432"
+    expose:
+      - 5432
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 5G
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_DB: postgres
+      POSTGRES_PASSWORD: postgres
+      TM_USER: ${TM_USER}
+      TM_DB: ${TM_DB}
+      TM_SCHEMA: ${TM_SCHEMA}
+      TM_PASSWORD: ${TM_PASSWORD}
+
+    volumes:
+#      - db_data:/var/lib/postgresql/data
+      - ./sh/init_db.sh:/docker-entrypoint-initdb.d/init_db.sh
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - task-net
+
+  liquibase:
+    image: liquibase/liquibase:${LIQUIBASE_VERSION}
+    container_name: liquibase
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - task-net
+    volumes:
+      - ./changelog:/liquibase/changelog
+    command:
+      - --url=${LIQUIBASE_URL}
+      - --username=${TM_USER}
+      - --password=${TM_PASSWORD}
+      - --loglevel=${LIQUIBASE_LOGLEVEL}
+      - --changeLogFile=${LIQUIBASE_CHANGELOG_FILE}
+      - --contexts=${LIQUIBASE_CONTEXTS}
+      - update
+
+volumes:
+  db_data:
+
+networks:
+  task-net:
