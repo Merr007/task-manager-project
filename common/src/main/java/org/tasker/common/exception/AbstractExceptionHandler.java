@@ -6,6 +6,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.util.Arrays;
+
 @Slf4j
 public abstract class AbstractExceptionHandler {
 
@@ -22,4 +24,5 @@ public abstract class AbstractExceptionHandler {
         ExceptionContainer container = new ExceptionContainer(exception);
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(container);
     }
+
 }

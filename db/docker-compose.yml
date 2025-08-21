@@ -52,8 +52,31 @@ services:
       - --contexts=${LIQUIBASE_CONTEXTS}
       - update
 
+  keycloak:
+    image: quay.io/keycloak/keycloak:latest
+    container_name: keycloak
+    ports:
+      - "8080:8080"
+    environment:
+      KEYCLOAK_ADMIN: ${KEYCLOAK_ADMIN}
+      KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD}
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://db:5432/${TM_DB}
+      KC_DB_USERNAME: ${TM_USER}
+      KC_DB_PASSWORD: ${TM_PASSWORD}
+      KC_HTTP_ENABLED: "true"
+      KEYCLOAK_IMPORT: /opt/keycloak/data/realm-export.json
+    depends_on:
+      - db
+    networks:
+      - task-net
+    volumes:
+      - ./keycloak_data/realm-export.json:/opt/keycloak/data/realm-export.json
+    command: start-dev --import-realm
+
 volumes:
   db_data:
+  keycloak_data:
 
 networks:
   task-net:
