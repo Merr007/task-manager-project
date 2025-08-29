@@ -12,6 +12,7 @@ import org.keycloak.representations.idm.RoleRepresentation;
 import org.keycloak.representations.idm.UserRepresentation;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.tasker.usermanagementservice.exception.UserNotFoundException;
 import org.tasker.usermanagementservice.exception.*;
 import org.tasker.usermanagementservice.model.UserRole;
 import org.tasker.usermanagementservice.security.utils.KeycloakAuthFactory;
@@ -19,6 +20,7 @@ import org.tasker.usermanagementservice.security.utils.UserSecurityUtils;
 import org.tasker.usermanagementservice.web.dto.auth.*;
 
 import java.util.Collections;
+import java.util.List;
 
 @Service
 @Slf4j
@@ -70,11 +72,24 @@ public class KeycloakServiceImpl implements KeycloakService {
     }
 
     @Override
-    public UserRepresentation getUser(String id) throws NotFoundException {
+    public UserRepresentation getUserById(String id) throws NotFoundException {
         try {
             return keycloak.realm(realmName).users().get(id).toRepresentation();
         } catch (NotFoundException e) {
             throw new UserNotFoundException("User with id " + id + " not found");
+        }
+    }
+
+    @Override
+    public UserRepresentation getUserByUsername(String username) throws UserNotFoundException {
+        try {
+            List<UserRepresentation> users = keycloak.realm(realmName).users().searchByUsername(username, true);
+            if (users.isEmpty()) {
+                throw new UserNotFoundException("User with username " + username + " not found");
+            }
+            return users.getFirst();
+        } catch (NotFoundException e) {
+            throw new UserNotFoundException("User with username " + username + " not found");
         }
     }
 

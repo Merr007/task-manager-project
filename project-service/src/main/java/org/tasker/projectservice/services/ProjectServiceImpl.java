@@ -65,6 +65,7 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<GetProjectResponse> getAllProjects(Pageable pageable) {
         return projectRepository.findAll(pageable).stream()
                 .map(projectMapper::toGetProjectResponse)

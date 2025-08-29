@@ -5,7 +5,6 @@ import lombok.Getter;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Getter
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -19,6 +18,6 @@ public class ExceptionContainer {
     }
 
     private List<StackTraceElem> createStackTrace(Exception e) {
-        return Arrays.stream(e.getStackTrace()).map(StackTraceElem::new).collect(Collectors.toList());
+        return Arrays.stream(e.getStackTrace()).map(StackTraceElem::new).toList();
     }
 }

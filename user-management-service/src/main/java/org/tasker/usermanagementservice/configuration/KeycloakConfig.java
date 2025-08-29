@@ -1,7 +1,6 @@
 package org.tasker.usermanagementservice.configuration;
 
 import jakarta.ws.rs.client.ClientBuilder;
-import lombok.Getter;
 import org.keycloak.OAuth2Constants;
 import org.keycloak.admin.client.Keycloak;
 import org.keycloak.admin.client.KeycloakBuilder;
