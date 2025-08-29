@@ -1,8 +1,10 @@
 package org.tasker.usermanagementservice.service;
 
-import org.tasker.usermanagementservice.web.dto.user.GetUserInfoResponse;
+import org.tasker.common.api.dto.user.GetUserResponse;
 
 public interface UserService {
 
-    GetUserInfoResponse getUserInfo(String userId);
+    GetUserResponse getUserById(String userId);
+
+    GetUserResponse getUserByUsername(String username);
 }

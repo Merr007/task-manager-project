@@ -2,10 +2,10 @@ package org.tasker.projectservice.configuration;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
-import org.tasker.common.client.ClientConfig;
+import org.tasker.common.security.CommonSecurityConfig;
 
 @Configuration
-@Import({ClientConfig.class})
-public class ProjectServiceConfig {
+@Import({CommonSecurityConfig.class})
+public class SecurityConfig {
 
 }

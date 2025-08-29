@@ -9,13 +9,18 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import lombok.AllArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.web.bind.annotation.*;
+import org.tasker.common.api.dto.user.GetUserResponse;
+import org.tasker.common.client.UsersRestClient;
 import org.tasker.common.exception.RestException;
 import org.tasker.common.validation.SortOrder;
 import org.tasker.projectservice.api.dto.create.CreateProjectRequest;
@@ -30,13 +35,11 @@ import java.util.List;
 @Tag(name = "Project operations management")
 @RestController
 @RequestMapping(path = "/v1/projects", produces = MediaType.APPLICATION_JSON_VALUE)
+@AllArgsConstructor
 public class ProjectController {
 
     private final ProjectService projectService;
-
-    public ProjectController(ProjectService projectService) {
-        this.projectService = projectService;
-    }
+    private final UsersRestClient usersRestClient;
 
     @PostMapping("/create")
     @ResponseStatus(HttpStatus.CREATED)
@@ -122,5 +125,11 @@ public class ProjectController {
         }
         Pageable pageable = sort != null ? PageRequest.of(offset, limit, sort) : PageRequest.of(offset, limit);
         return ResponseEntity.ok(projectService.getAllProjects(pageable));
+    }
+
+    @GetMapping("/users/{username}")
+    public ResponseEntity<GetUserResponse> getUser(@PathVariable("username") String username) {
+        System.out.println("Authentication: " + ((JwtAuthenticationToken)SecurityContextHolder.getContext().getAuthentication()).getToken().getTokenValue());
+        return ResponseEntity.ok(usersRestClient.getUserByUsername(username).get());
     }
 }

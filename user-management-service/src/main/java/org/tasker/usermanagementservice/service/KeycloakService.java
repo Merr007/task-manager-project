@@ -9,7 +9,9 @@ public interface KeycloakService {
 
     String registerUser(RegisterRequest registerRequest);
 
-    UserRepresentation getUser(String id);
+    UserRepresentation getUserById(String id);
+
+    UserRepresentation getUserByUsername(String username);
 
     RefreshTokenResponse refreshToken(RefreshTokenRequest refreshTokenRequest);
 }
