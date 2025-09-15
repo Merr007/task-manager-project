@@ -28,7 +28,7 @@
   "oauth2DeviceCodeLifespan": 600,
   "oauth2DevicePollingInterval": 5,
   "enabled": true,
-  "sslRequired": "external",
+  "sslRequired": "none",
   "registrationAllowed": true,
   "registrationEmailAsUsername": false,
   "rememberMe": true,
@@ -378,6 +378,7 @@
         }
       ],
       "security-admin-console": [],
+      "tasker-user-front": [],
       "admin-cli": [],
       "account-console": [],
       "broker": [
@@ -485,7 +486,6 @@
     {
       "id": "598e55c0-7db6-4712-9140-6ebad582f4bf",
       "name": "Admin",
-      "description": "Admin group",
       "path": "/Admin",
       "subGroups": [],
       "attributes": {},
@@ -497,7 +497,6 @@
     {
       "id": "1dcdb144-08dd-4da1-ab36-6d98a5bfb81f",
       "name": "Internal",
-      "description": "Internal group",
       "path": "/Internal",
       "subGroups": [],
       "attributes": {},
@@ -509,7 +508,6 @@
     {
       "id": "7e5bc40b-9ba1-4e2b-9c15-da72bbfdcd73",
       "name": "Users",
-      "description": "Users group",
       "path": "/Users",
       "subGroups": [],
       "attributes": {},
@@ -614,11 +612,11 @@
       "groups": []
     },
     {
-      "id": "5036c59f-0b7f-4823-9d1d-174291df5a72",
+      "id": "33d9cb81-3fea-4404-a34b-0677fac26f59",
       "username": "service-account-tasker-user-management",
       "emailVerified": false,
       "enabled": true,
-      "createdTimestamp": 1755676812575,
+      "createdTimestamp": 1757605012746,
       "totp": false,
       "serviceAccountClientId": "tasker-user-management",
       "disableableCredentialTypes": [],
@@ -626,14 +624,6 @@
       "realmRoles": [
         "default-roles-tasker_realm"
       ],
-      "clientRoles": {
-        "realm-management": [
-          "view-realm",
-          "view-users",
-          "query-users",
-          "manage-users"
-        ]
-      },
       "notBefore": 0,
       "groups": []
     }
@@ -830,14 +820,12 @@
       "protocol": "openid-connect",
       "attributes": {
         "realm_client": "false",
-        "client.secret.creation.time": "1756040847"
+        "client.secret.creation.time": "1757400297"
       },
       "authenticationFlowBindingOverrides": {},
       "fullScopeAllowed": true,
       "nodeReRegistrationTimeout": -1,
-      "defaultClientScopes": [
-        "service_account"
-      ],
+      "defaultClientScopes": [],
       "optionalClientScopes": [],
       "authorizationSettings": {
         "allowRemoteResourceManagement": true,
@@ -851,10 +839,10 @@
             "uris": [],
             "scopes": [
               {
-                "name": "view"
+                "name": "manage-group-membership"
               },
               {
-                "name": "manage-group-membership"
+                "name": "view"
               },
               {
                 "name": "impersonate"
@@ -985,17 +973,6 @@
         "decisionStrategy": "UNANIMOUS",
         "authorizationSchema": {
           "resourceTypes": {
-            "Clients": {
-              "type": "Clients",
-              "scopes": [
-                "map-roles-composite",
-                "view",
-                "map-roles-client-scope",
-                "map-roles",
-                "manage"
-              ],
-              "scopeAliases": {}
-            },
             "Roles": {
               "type": "Roles",
               "scopes": [
@@ -1008,36 +985,47 @@
             "Groups": {
               "type": "Groups",
               "scopes": [
-                "impersonate-members",
                 "view-members",
                 "manage-members",
                 "manage-membership",
                 "view",
-                "manage"
+                "manage",
+                "impersonate-members"
               ],
               "scopeAliases": {}
             },
             "Users": {
               "type": "Users",
               "scopes": [
-                "impersonate",
                 "manage-group-membership",
                 "view",
                 "map-roles",
-                "manage"
+                "manage",
+                "impersonate"
               ],
               "scopeAliases": {
-                "view": [
-                  "view-members"
-                ],
                 "impersonate": [
                   "impersonate-members"
                 ],
                 "manage": [
                   "manage-members"
+                ],
+                "view": [
+                  "view-members"
                 ]
               },
               "groupType": "Groups"
+            },
+            "Clients": {
+              "type": "Clients",
+              "scopes": [
+                "view",
+                "map-roles-client-scope",
+                "map-roles",
+                "manage",
+                "map-roles-composite"
+              ],
+              "scopeAliases": {}
             }
           }
         }
@@ -1121,6 +1109,7 @@
         "client.secret.creation.time": "1756314777",
         "backchannel.logout.session.required": "true",
         "standard.token.exchange.enabled": "false",
+        "post.logout.redirect.uris": "+",
         "oauth2.device.authorization.grant.enabled": "false",
         "backchannel.logout.revoke.offline.tokens": "false"
       },
@@ -1257,25 +1246,100 @@
       ]
     },
     {
+      "id": "acad8a3b-e625-4ce9-93c8-41747798e83e",
+      "clientId": "tasker-user-front",
+      "name": "tasker-user-front",
+      "description": "",
+      "rootUrl": "http://localhost:3000",
+      "adminUrl": "http://localhost:3000",
+      "baseUrl": "",
+      "surrogateAuthRequired": false,
+      "enabled": true,
+      "alwaysDisplayInConsole": true,
+      "clientAuthenticatorType": "client-secret",
+      "redirectUris": [
+        "http://localhost:3000/*",
+        "http://localhost:3000/",
+        "http://localhost:3000/login"
+      ],
+      "webOrigins": [
+        "http://localhost:3000/*",
+        "*",
+        "http://localhost:3000"
+      ],
+      "notBefore": 0,
+      "bearerOnly": false,
+      "consentRequired": false,
+      "standardFlowEnabled": true,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": true,
+      "serviceAccountsEnabled": false,
+      "publicClient": true,
+      "frontchannelLogout": true,
+      "protocol": "openid-connect",
+      "attributes": {
+        "request.object.signature.alg": "any",
+        "request.object.encryption.alg": "any",
+        "client.introspection.response.allow.jwt.claim.enabled": "false",
+        "standard.token.exchange.enabled": "false",
+        "login_theme": "keycloak.v2",
+        "frontchannel.logout.session.required": "true",
+        "oauth2.device.authorization.grant.enabled": "false",
+        "backchannel.logout.revoke.offline.tokens": "false",
+        "use.refresh.tokens": "true",
+        "realm_client": "false",
+        "oidc.ciba.grant.enabled": "false",
+        "client.use.lightweight.access.token.enabled": "false",
+        "backchannel.logout.session.required": "true",
+        "request.object.required": "not required",
+        "client_credentials.use_refresh_token": "false",
+        "access.token.header.type.rfc9068": "false",
+        "tls.client.certificate.bound.access.tokens": "false",
+        "require.pushed.authorization.requests": "false",
+        "acr.loa.map": "{}",
+        "display.on.consent.screen": "false",
+        "request.object.encryption.enc": "any",
+        "pkce.code.challenge.method": "S256",
+        "token.response.type.bearer.lower-case": "false"
+      },
+      "authenticationFlowBindingOverrides": {},
+      "fullScopeAllowed": true,
+      "nodeReRegistrationTimeout": -1,
+      "defaultClientScopes": [
+        "web-origins",
+        "acr",
+        "profile",
+        "roles",
+        "basic",
+        "email"
+      ],
+      "optionalClientScopes": [
+        "address",
+        "phone",
+        "offline_access",
+        "organization",
+        "microprofile-jwt"
+      ]
+    },
+    {
       "id": "7bf90ba9-a894-42b9-b57e-3fac5fda80dd",
       "clientId": "tasker-user-management",
       "name": "User Management Service",
       "description": "",
-      "rootUrl": "http://localhost:8081",
+      "rootUrl": "http://localhost:3000",
       "adminUrl": "",
       "baseUrl": "",
       "surrogateAuthRequired": false,
       "enabled": true,
       "alwaysDisplayInConsole": false,
       "clientAuthenticatorType": "client-secret",
-      "secret": "e9WTLZUe43y0yHOEZ1B7g4NsoPZmeCoI",
+      "secret": "QXPzpwKeE8A4LzscQpAjagsuS48Yck7x",
       "redirectUris": [
-        "http://localhost:8081/*",
-        "http://localhost:8082/*",
-        "http://localhost:8081"
+        "http://localhost:3000/*",
+        "http://localhost:3000"
       ],
       "webOrigins": [
-        "http://localhost:8081"
+        "http://localhost:3000"
       ],
       "notBefore": 0,
       "bearerOnly": false,
@@ -1288,29 +1352,34 @@
       "frontchannelLogout": true,
       "protocol": "openid-connect",
       "attributes": {
-        "client.secret.creation.time": "1755585836",
+        "access.token.lifespan": "1800",
         "request.object.signature.alg": "any",
-        "request.object.encryption.alg": "any",
-        "client.introspection.response.allow.jwt.claim.enabled": "false",
-        "standard.token.exchange.enabled": "false",
         "frontchannel.logout.session.required": "true",
-        "post.logout.redirect.uris": "+",
+        "post.logout.redirect.uris": "http://localhost:3000",
         "oauth2.device.authorization.grant.enabled": "false",
         "use.jwks.url": "false",
         "backchannel.logout.revoke.offline.tokens": "false",
         "use.refresh.tokens": "true",
         "realm_client": "false",
         "oidc.ciba.grant.enabled": "false",
-        "client.use.lightweight.access.token.enabled": "false",
+        "exclude.issuer.from.auth.response": "false",
         "backchannel.logout.session.required": "true",
         "client_credentials.use_refresh_token": "false",
+        "require.pushed.authorization.requests": "false",
+        "request.object.encryption.enc": "any",
+        "pkce.code.challenge.method": "S256",
+        "client.secret.creation.time": "1755585836",
+        "request.object.encryption.alg": "any",
+        "client.introspection.response.allow.jwt.claim.enabled": "false",
+        "standard.token.exchange.enabled": "false",
+        "login_theme": "keycloak.v2",
+        "exclude.session.state.from.auth.response": "false",
+        "client.use.lightweight.access.token.enabled": "false",
         "request.object.required": "not required",
         "access.token.header.type.rfc9068": "false",
         "acr.loa.map": "{}",
-        "require.pushed.authorization.requests": "false",
         "tls.client.certificate.bound.access.tokens": "false",
         "display.on.consent.screen": "false",
-        "request.object.encryption.enc": "any",
         "token.response.type.bearer.lower-case": "false"
       },
       "authenticationFlowBindingOverrides": {},
@@ -2088,14 +2157,14 @@
         "subComponents": {},
         "config": {
           "allowed-protocol-mapper-types": [
-            "oidc-sha256-pairwise-sub-mapper",
             "oidc-usermodel-attribute-mapper",
             "saml-user-property-mapper",
-            "oidc-full-name-mapper",
-            "saml-user-attribute-mapper",
             "oidc-usermodel-property-mapper",
+            "saml-role-list-mapper",
+            "oidc-sha256-pairwise-sub-mapper",
             "oidc-address-mapper",
-            "saml-role-list-mapper"
+            "saml-user-attribute-mapper",
+            "oidc-full-name-mapper"
           ]
         }
       },
@@ -2123,14 +2192,14 @@
         "subComponents": {},
         "config": {
           "allowed-protocol-mapper-types": [
+            "oidc-usermodel-property-mapper",
+            "oidc-sha256-pairwise-sub-mapper",
+            "oidc-full-name-mapper",
             "saml-user-property-mapper",
             "oidc-usermodel-attribute-mapper",
-            "oidc-full-name-mapper",
             "saml-role-list-mapper",
-            "saml-user-attribute-mapper",
             "oidc-address-mapper",
-            "oidc-usermodel-property-mapper",
-            "oidc-sha256-pairwise-sub-mapper"
+            "saml-user-attribute-mapper"
           ]
         }
       },
@@ -3061,7 +3130,7 @@
     "darkMode": "true"
   },
   "keycloakVersion": "26.3.3",
-  "userManagedAccessAllowed": false,
+  "userManagedAccessAllowed": true,
   "organizationsEnabled": false,
   "verifiableCredentialsEnabled": false,
   "adminPermissionsEnabled": true,

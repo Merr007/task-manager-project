@@ -8,7 +8,7 @@ import org.tasker.projectservice.domain.model.ProjectRole;
 public record CreateProjectMemberRequest(
         @NotBlank
         @Schema(description = "User identifier")
-        Long userId,
+        String userId,
 
         @Schema(description = "User role in project")
         ProjectRole role

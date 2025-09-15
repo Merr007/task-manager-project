@@ -8,4 +8,8 @@ import org.tasker.projectservice.data.entities.ProjectTag;
 public interface ProjectTagRepository extends JpaRepository<ProjectTag, Long> {
 
     ProjectTag findByName(String name);
+
+    boolean existsByName(String name);
+
+    void deleteByName(String name);
 }
