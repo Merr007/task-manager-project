@@ -74,9 +74,27 @@ services:
       - ./keycloak_data/import:/opt/keycloak/data/import
     command: start-dev --import-realm
 
+  minio:
+    image: minio/minio:latest
+    ports:
+      - "9000:9000" # API порт
+      - "9001:9001" # Консоль управления
+    volumes:
+      - minio_data:/data
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
+    command: server /data --console-address ":9001"
+    healthcheck:
+      test: [ "CMD-SHELL", "mc admin health alias local | grep 'status: OK' || exit 1" ]
+      interval: 30s
+      timeout: 20s
+      retries: 3
+
 volumes:
   db_data:
   keycloak_data:
+  minio_data:
 
 networks:
   task-net:

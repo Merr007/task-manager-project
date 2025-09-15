@@ -8,6 +8,7 @@ import org.tasker.projectservice.api.dto.create.CreateProjectRequest;
 import org.tasker.projectservice.api.dto.create.CreateProjectTagRequest;
 import org.tasker.projectservice.api.dto.get.GetProjectResponse;
 import org.tasker.projectservice.api.dto.get.GetProjectTag;
+import org.tasker.projectservice.api.dto.update.UpdateProjectResponse;
 import org.tasker.projectservice.data.entities.Project;
 import org.tasker.projectservice.data.entities.ProjectMember;
 import org.tasker.projectservice.data.entities.ProjectTag;
@@ -39,9 +40,13 @@ public abstract class ProjectMapper {
     @Mapping(target = "projects", ignore = true)
     public abstract ProjectTag toProjectTag(CreateProjectTagRequest projectTagRequest);
 
+    @Mapping(target = "id", source = "id")
     public abstract GetProjectResponse toGetProjectResponse(Project project);
 
     public abstract GetProjectTag toGetProjectTag(ProjectTag projectTag);
+
+    @Mapping(target = "projectName", source = "name")
+    public abstract UpdateProjectResponse toUpdateProjectResponse(Project project);
 
     public Set<ProjectTag> mapProjectTags(Set<CreateProjectTagRequest> projectTagsRequest) {
         if (projectTagsRequest == null) {
@@ -54,5 +59,12 @@ public abstract class ProjectMapper {
             projectTags.add(Objects.requireNonNullElseGet(existingTag, () -> projectTagRepository.save(projectTag)));
         }
         return projectTags;
+    }
+
+    public ProjectTag toNewProjectTag(String tagName, Project project) {
+        ProjectTag projectTag = new ProjectTag();
+        projectTag.setName(tagName);
+        projectTag.setProjects(Set.of(project));
+        return projectTag;
     }
 }

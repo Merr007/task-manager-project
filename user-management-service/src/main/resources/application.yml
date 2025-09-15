@@ -15,7 +15,7 @@ spring:
         registration:
           keycloak:
             client-id: tasker-user-management
-            client-secret: e9WTLZUe43y0yHOEZ1B7g4NsoPZmeCoI
+            client-secret: QXPzpwKeE8A4LzscQpAjagsuS48Yck7x
             authorization-grant-type: authorization_code
             scope: openid, profile
         provider:

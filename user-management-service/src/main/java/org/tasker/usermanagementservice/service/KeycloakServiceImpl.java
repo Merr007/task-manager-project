@@ -21,6 +21,7 @@ import org.tasker.usermanagementservice.web.dto.auth.*;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @Slf4j
@@ -80,6 +81,7 @@ public class KeycloakServiceImpl implements KeycloakService {
         }
     }
 
+
     @Override
     public UserRepresentation getUserByUsername(String username) throws UserNotFoundException {
         try {
@@ -91,6 +93,20 @@ public class KeycloakServiceImpl implements KeycloakService {
         } catch (NotFoundException e) {
             throw new UserNotFoundException("User with username " + username + " not found");
         }
+    }
+
+    @Override
+    public List<UserRepresentation> getUsersById(List<String> ids) {
+        return ids.stream()
+                .map(id -> {
+                    try {
+                        return keycloak.realm(realmName).users().get(id).toRepresentation();
+                    } catch (NotFoundException e) {
+                        return null;
+                    }
+                })
+                .filter(Objects::nonNull)
+                .toList();
     }
 
     @Override

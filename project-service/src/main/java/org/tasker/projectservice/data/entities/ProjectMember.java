@@ -25,12 +25,12 @@ public class ProjectMember {
     private Project project;
 
     @Column(nullable = false)
-    private Long userId;
+    private String userId;
 
     @Enumerated(EnumType.STRING)
     private ProjectRole role;
 
-    @Column(columnDefinition = "DATE")
+    @Column(columnDefinition = "TIMESTAMP")
     private LocalDateTime joinedAt;
 
     @Override

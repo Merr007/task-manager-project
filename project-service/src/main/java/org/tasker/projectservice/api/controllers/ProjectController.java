@@ -2,7 +2,6 @@ package org.tasker.projectservice.api.controllers;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -26,10 +25,16 @@ import org.tasker.common.validation.SortOrder;
 import org.tasker.projectservice.api.dto.create.CreateProjectRequest;
 import org.tasker.projectservice.api.dto.create.CreateProjectResponse;
 import org.tasker.projectservice.api.dto.get.GetProjectResponse;
+import org.tasker.projectservice.api.dto.update.UpdateProjectRequest;
+import org.tasker.projectservice.api.dto.update.UpdateProjectResponse;
+import org.tasker.projectservice.api.dto.update.UpdateStatusRequest;
+import org.tasker.projectservice.api.dto.update.UpdateStatusResponse;
 import org.tasker.projectservice.exception.NoSuchProjectException;
+import org.tasker.projectservice.services.AttachmentService;
 import org.tasker.projectservice.services.ProjectService;
 import org.tasker.projectservice.validation.ProjSortBy;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Tag(name = "Project operations management")
@@ -39,6 +44,7 @@ import java.util.List;
 public class ProjectController {
 
     private final ProjectService projectService;
+    private final AttachmentService attachmentService;
     private final UsersRestClient usersRestClient;
 
     @PostMapping("/create")
@@ -47,10 +53,11 @@ public class ProjectController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Project successfully created",
                     content = @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = CreateProjectResponse.class))),
+                            schema = @Schema(implementation = CreateProjectResponse.class))
+            )
     })
     public ResponseEntity<CreateProjectResponse> createProject(@Parameter(description = "Create project request")
-                                           @RequestBody @Valid CreateProjectRequest request) {
+                                                               @RequestBody @Valid CreateProjectRequest request) {
         return ResponseEntity.ok(projectService.createProject(request));
     }
 
@@ -64,7 +71,7 @@ public class ProjectController {
             @ApiResponse(responseCode = "404", description = "Project not found by specified Id")
     })
     public ResponseEntity<GetProjectResponse> getProject(@Parameter(description = "Project identifier", required = true)
-                                        @PathVariable Long projectId) {
+                                                         @PathVariable Long projectId) {
         try {
             return ResponseEntity.ok().body(projectService.getProject(projectId));
         } catch (NoSuchProjectException e) {
@@ -74,7 +81,7 @@ public class ProjectController {
 
     @DeleteMapping("/delete/{projectId}")
     @ResponseStatus(HttpStatus.OK)
-    @Operation(summary = "Delete project with id")
+    @Operation(summary = "Delete project with memberId")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successful project delete"),
             @ApiResponse(responseCode = "404", description = "Project not found by specified Id")
@@ -104,18 +111,21 @@ public class ProjectController {
             @Parameter(description = "Size of page")
             @RequestParam(required = false, defaultValue = "10")
             int limit,
-            @Parameter(description = "Sorting field",
-                    in = ParameterIn.QUERY,
-                    schema = @Schema(type = "string",
-                            allowableValues = {"name", "startDate", "endDate", "status"}))
+            @Parameter(description = "Sorting field")
             @RequestParam(required = false)
             String sortBy,
-            @Parameter(description = "Sorting order (asc or desc)",
-                    in = ParameterIn.QUERY,
-                    schema = @Schema(type = "string",
-                            allowableValues = {"asc", "desc"}))
+            @Parameter(description = "Sorting order (asc or desc)")
             @RequestParam(required = false, defaultValue = "asc")
-            String sortOrder) {
+            String sortOrder,
+            @Parameter(description = "Partial project name for searching")
+            @RequestParam(required = false)
+            String projectName,
+            @Parameter(description = "Start date for project creation (YYYY-MM-DD)")
+            @RequestParam(required = false)
+            LocalDate startDate,
+            @Parameter(description = "End date for project creation (YYYY-MM-DD)")
+            @RequestParam(required = false)
+            LocalDate endDate) {
         Sort sort = null;
         ProjSortBy projSortBy = ProjSortBy.fromString(sortBy);
         SortOrder order = SortOrder.fromString(sortOrder);
@@ -124,12 +134,28 @@ public class ProjectController {
             sort = Sort.by(direction, projSortBy.getSortBy());
         }
         Pageable pageable = sort != null ? PageRequest.of(offset, limit, sort) : PageRequest.of(offset, limit);
-        return ResponseEntity.ok(projectService.getAllProjects(pageable));
+        return ResponseEntity.ok(projectService.getAllProjects(pageable, startDate, endDate, projectName));
+    }
+
+    @PutMapping("/{projectId}")
+    @ResponseStatus(HttpStatus.OK)
+    public ResponseEntity<UpdateProjectResponse> updateProject(@Parameter(description = "Project identifier", required = true)
+                                                               @PathVariable("projectId") Long projectId,
+                                                               @RequestBody @Valid UpdateProjectRequest request) {
+        return ResponseEntity.ok(projectService.updateProject(request, projectId));
+    }
+
+    @PatchMapping("/{projectId}/status")
+    @ResponseStatus(HttpStatus.OK)
+    public ResponseEntity<UpdateStatusResponse> updateProjectStatus(@Parameter(description = "Project identifier", required = true)
+                                                                    @PathVariable("projectId") Long projectId,
+                                                                    @RequestBody @Valid UpdateStatusRequest request) {
+        return ResponseEntity.ok(projectService.updateStatus(request, projectId));
     }
 
     @GetMapping("/users/{username}")
     public ResponseEntity<GetUserResponse> getUser(@PathVariable("username") String username) {
-        System.out.println("Authentication: " + ((JwtAuthenticationToken)SecurityContextHolder.getContext().getAuthentication()).getToken().getTokenValue());
+        System.out.println("Authentication: " + ((JwtAuthenticationToken) SecurityContextHolder.getContext().getAuthentication()).getToken().getTokenValue());
         return ResponseEntity.ok(usersRestClient.getUserByUsername(username).get());
     }
 }

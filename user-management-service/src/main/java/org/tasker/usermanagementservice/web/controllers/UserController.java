@@ -9,8 +9,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.tasker.common.api.dto.user.GetUserRequest;
 import org.tasker.common.api.dto.user.GetUserResponse;
 import org.tasker.usermanagementservice.service.UserService;
+
+import java.util.List;
 
 @Slf4j
 @RestController
@@ -67,5 +70,11 @@ public class UserController {
             @Parameter(description = "Username of the user", required = true)
             @PathVariable("username") String username) {
         return ResponseEntity.ok(userService.getUserByUsername(username));
+    }
+
+    @PostMapping
+    @ResponseStatus(HttpStatus.OK)
+    public ResponseEntity<List<GetUserResponse>> getBatchUsers(@RequestBody List<GetUserRequest> users) {
+        return ResponseEntity.ok(userService.getBatchUsers(users));
     }
 }

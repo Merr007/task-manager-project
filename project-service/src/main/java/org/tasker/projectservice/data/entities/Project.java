@@ -9,6 +9,7 @@ import org.tasker.projectservice.domain.model.ProjectStatus;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -48,9 +49,9 @@ public class Project {
 
     @OneToMany(mappedBy = "project", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @ToString.Exclude
-    private List<ProjectMember> projectMembers;
+    private List<ProjectMember> projectMembers = new ArrayList<>();
 
-    @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
+    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
     @JoinTable(
             name = "project_project_tags",
             joinColumns = @JoinColumn(name = "project_id"),
@@ -61,7 +62,7 @@ public class Project {
 
     @OneToMany(mappedBy = "project", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @ToString.Exclude
-    private List<ProjectAttachment> attachments;
+    private List<ProjectAttachment> attachments = new ArrayList<>();
 
     @Override
     public final boolean equals(Object o) {

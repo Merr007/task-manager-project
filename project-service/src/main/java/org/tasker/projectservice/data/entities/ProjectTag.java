@@ -1,11 +1,13 @@
 package org.tasker.projectservice.data.entities;
 
 import jakarta.persistence.*;
-import lombok.*;
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 import org.hibernate.proxy.HibernateProxy;
 
+import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
@@ -22,10 +24,9 @@ public class ProjectTag {
     @Column(nullable = false, unique = true)
     private String name;
 
-    @ManyToMany(mappedBy = "tags")
-    @OnDelete(action = OnDeleteAction.CASCADE)
+    @ManyToMany(mappedBy = "tags", fetch = FetchType.LAZY)
     @ToString.Exclude
-    private Set<Project> projects;
+    private Set<Project> projects = new HashSet<>();
 
     @Override
     public final boolean equals(Object o) {
