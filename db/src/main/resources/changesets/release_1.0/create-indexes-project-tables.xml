@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                           http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.25.xsd">
+
+    <changeSet id="release-1.0-indexes-project-tables-before" author="vladimir lis">
+        <tagDatabase tag="release-1.0-indexes-project-tables-before"/>
+    </changeSet>
+
+    <changeSet id="create-indexes-project-members-table" author="vladimir lis">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <indexExists tableName="project_members" indexName="IDX_PROJECT_MEMBER_PROJECT_ID"/>
+            </not>
+            <tableExists tableName="project_members"/>
+            <columnExists tableName="project_members" columnName="project_id"/>
+        </preConditions>
+        <createIndex indexName="IDX_PROJECT_MEMBER_PROJECT_ID" tableName="project_members">
+            <column name="project_id"/>
+        </createIndex>
+        <rollback/>
+    </changeSet>
+
+    <changeSet id="create-composite-index-to-project-project-tags-table" author="vladimir lis">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <indexExists tableName="project_project_tags" indexName="IDX_PROJECT_PROJECT_TAGS_COMPOSITE"/>
+            </not>
+            <tableExists tableName="project_project_tags"/>
+            <columnExists tableName="project_project_tags" columnName="project_id"/>
+            <columnExists tableName="project_project_tags" columnName="project_tag_id"/>
+        </preConditions>
+        <createIndex indexName="IDX_PROJECT_PROJECT_TAGS_COMPOSITE" tableName="project_project_tags">
+            <column name="project_id"/>
+            <column name="project_tag_id"/>
+        </createIndex>
+
+        <addUniqueConstraint tableName="project_project_tags"
+                             columnNames="project_id, project_tag_id"
+                             constraintName="UC_PROJECT_PROJECT_TAG"
+                             deferrable="false"
+                             disabled="false"
+                             initiallyDeferred="false"/>
+        <rollback/>
+    </changeSet>
+
+    <changeSet id="create-index-projects-status" author="vladimir lis">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <indexExists tableName="projects" indexName="IDX_PROJECTS_STATUS"/>
+            </not>
+            <tableExists tableName="projects"/>
+            <columnExists tableName="projects" columnName="status"/>
+        </preConditions>
+        <createIndex indexName="IDX_PROJECTS_STATUS" tableName="projects">
+            <column name="status"/>
+        </createIndex>
+        <rollback/>
+    </changeSet>
+
+    <changeSet id="create-index-projects-start-date" author="vladimir lis">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <indexExists tableName="projects" indexName="IDX_PROJECTS_START_DATE"/>
+            </not>
+            <tableExists tableName="projects"/>
+            <columnExists tableName="projects" columnName="start_date"/>
+        </preConditions>
+        <createIndex indexName="IDX_PROJECTS_START_DATE" tableName="projects">
+            <column name="start_date"/>
+        </createIndex>
+        <rollback/>
+    </changeSet>
+
+    <changeSet id="create-index-projects-end-date" author="vladimir lis">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <indexExists tableName="projects" indexName="IDX_PROJECTS_END_DATE"/>
+            </not>
+            <tableExists tableName="projects"/>
+            <columnExists tableName="projects" columnName="end_date"/>
+        </preConditions>
+        <createIndex indexName="IDX_PROJECTS_END_DATE" tableName="projects">
+            <column name="end_date"/>
+        </createIndex>
+        <rollback/>
+    </changeSet>
+
+    <changeSet id="create-index-project-members-user-id" author="vladimir lis">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <indexExists tableName="project_members" indexName="IDX_PROJECT_MEMBERS_USER_ID"/>
+            </not>
+            <tableExists tableName="project_members"/>
+            <columnExists tableName="project_members" columnName="user_id"/>
+        </preConditions>
+        <createIndex indexName="IDX_PROJECT_MEMBERS_USER_ID" tableName="project_members">
+            <column name="user_id"/>
+        </createIndex>
+        <rollback/>
+    </changeSet>
+
+    <changeSet id="create-index-project-members-joined-at" author="vladimir lis">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <indexExists tableName="project_members" indexName="IDX_PROJECT_MEMBERS_JOINED_AT"/>
+            </not>
+            <tableExists tableName="project_members"/>
+            <columnExists tableName="project_members" columnName="joined_at"/>
+        </preConditions>
+        <createIndex indexName="IDX_PROJECT_MEMBERS_JOINED_AT" tableName="project_members">
+            <column name="joined_at"/>
+        </createIndex>
+        <rollback/>
+    </changeSet>
+
+    <changeSet id="create-index-project-attachments-project-id" author="vladimir lis">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <indexExists tableName="project_attachments" indexName="IDX_PROJECT_ATTACHMENTS_PROJECT_ID"/>
+            </not>
+            <tableExists tableName="project_attachments"/>
+            <columnExists tableName="project_attachments" columnName="project_id"/>
+        </preConditions>
+        <createIndex indexName="IDX_PROJECT_ATTACHMENTS_PROJECT_ID" tableName="project_attachments">
+            <column name="project_id"/>
+        </createIndex>
+        <rollback/>
+    </changeSet>
+
+    <changeSet id="create-index-project-attachments-upload-date" author="vladimir lis">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <indexExists tableName="project_attachments" indexName="IDX_PROJECT_ATTACHMENTS_UPLOAD_DATE"/>
+            </not>
+            <tableExists tableName="project_attachments"/>
+            <columnExists tableName="project_attachments" columnName="upload_date"/>
+        </preConditions>
+        <createIndex indexName="IDX_PROJECT_ATTACHMENTS_UPLOAD_DATE" tableName="project_attachments">
+            <column name="upload_date"/>
+        </createIndex>
+        <rollback/>
+    </changeSet>
+
+    <changeSet id="release-1.0-indexes-project-tables-applied" author="vladimir lis">
+        <tagDatabase tag="release-1.0-indexes-project-tables-applied"/>
+    </changeSet>
+
+</databaseChangeLog>

@@ -19,19 +19,29 @@ public class ProjectMemberRepositoryImpl implements ProjectMemberRepository {
     private EntityManager em;
 
     @Override
-    public List<ProjectMember> findByProjectId(Long projectId, int limit, int offset) {
-        CriteriaBuilder cb = em.getCriteriaBuilder();
-        CriteriaQuery<ProjectMember> cq = cb.createQuery(ProjectMember.class);
-        Root<ProjectMember> root = cq.from(ProjectMember.class);
-
-        Predicate predicate = cb.equal(root.get("project").get("id"), projectId);
-        cq.where(predicate);
-
-        TypedQuery<ProjectMember> query = em.createQuery(cq);
+    public List<ProjectMember> findByProjectIdPaged(Long projectId, int limit, int offset) {
+        TypedQuery<ProjectMember> query = getProjectMemberQueryById(projectId);
 
         query.setFirstResult(offset);
         query.setMaxResults(limit);
 
         return query.getResultList();
     }
+
+    @Override
+    public List<ProjectMember> findByProjectId(Long projectId) {
+        return getProjectMemberQueryById(projectId).getResultList();
+    }
+
+    private TypedQuery<ProjectMember> getProjectMemberQueryById(Long projectId) {
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+        CriteriaQuery<ProjectMember> cq = cb.createQuery(ProjectMember.class);
+        Root<ProjectMember> root = cq.from(ProjectMember.class);
+
+        Predicate predicate = cb.equal(root.get("project").get("id"), projectId);
+        cq.where(predicate);
+        return em.createQuery(cq);
+    }
+
+
 }

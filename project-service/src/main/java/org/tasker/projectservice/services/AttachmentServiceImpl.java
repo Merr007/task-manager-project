@@ -85,18 +85,23 @@ public class AttachmentServiceImpl implements AttachmentService {
     public AttachmentDownloadResponse downloadAttachmentWithMetadata(Long attachmentId, Long projectId) throws S3ObjectNotFoundException {
         ProjectAttachment attachment = getProjectAttachmentOrElseThrow(attachmentId, projectId);
 
-        GetObjectRequest getObjectRequest = S3ProviderUtils.getObjectRequest(awsProperties.getS3().getBucket(), attachment);
+        try {
+            GetObjectRequest getObjectRequest = S3ProviderUtils.getObjectRequest(awsProperties.getS3().getBucket(), attachment);
 
-        ResponseInputStream<GetObjectResponse> s3Object = s3Client.getObject(getObjectRequest);
+            ResponseInputStream<GetObjectResponse> s3Object = s3Client.getObject(getObjectRequest);
 
-        log.info("Downloading attachment with metadata from s3: {}", attachment.getFilename());
+            log.info("Downloading attachment with metadata from s3: {}", attachment.getFilename());
 
-        return new AttachmentDownloadResponse(
-                s3Object,
-                attachment.getFilename(),
-                attachment.getContentType() != null ? attachment.getContentType() : "application/octet-stream",
-                attachment.getFilesize()
-        );
+            return new AttachmentDownloadResponse(
+                    s3Object,
+                    attachment.getFilename(),
+                    attachment.getContentType() != null ? attachment.getContentType() : "application/octet-stream",
+                    attachment.getFilesize()
+            );
+        } catch (Exception e) {
+            log.error("Error downloading attachment {}: {}", attachment.getFilename(), e.getMessage(), e);
+            throw new S3ObjectNotFoundException("Не удалось скачать файл: " + e.getMessage());
+        }
     }
 
     @Override
@@ -104,10 +109,15 @@ public class AttachmentServiceImpl implements AttachmentService {
     public GetAttachmentUrlResponse getDownloadUrl(Long attachmentId, Long projectId) throws S3ObjectNotFoundException {
         ProjectAttachment attachment = getProjectAttachmentOrElseThrow(attachmentId, projectId);
 
-        String url = getObjectPresignedUrl(attachment);
+        try {
+            String url = getObjectPresignedUrl(attachment);
 
-        log.info("Generated download URL for attachment: {}", attachment.getFilename());
-        return new GetAttachmentUrlResponse(attachment.getId(), attachment.getFilename(), url);
+            log.info("Generated download URL for attachment: {}", attachment.getFilename());
+            return new GetAttachmentUrlResponse(attachment.getId(), attachment.getFilename(), url);
+        } catch (Exception e) {
+            log.error("Error generating download URL for attachment {}: {}", attachment.getFilename(), e.getMessage(), e);
+            throw new S3ObjectNotFoundException("Не удалось сгенерировать URL для скачивания файла: " + e.getMessage());
+        }
     }
 
     @Override

@@ -22,7 +22,7 @@ import java.util.List;
 
 @RestController
 @Tag(name = "Project attachment operations management")
-@RequestMapping("/v1/projects/{projectId}")
+@RequestMapping("/api/v1/projects/{projectId}")
 @RequiredArgsConstructor
 public class ProjectAttachmentController {
 

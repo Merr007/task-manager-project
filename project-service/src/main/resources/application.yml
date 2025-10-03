@@ -3,6 +3,14 @@ server:
   tomcat:
     max-swallow-size: 600MB
 
+grpc:
+  server:
+    port: 9092
+
+  client:
+    user-management-service:
+      address: 'static://localhost:9091'
+
 spring:
   application:
     name: project-service

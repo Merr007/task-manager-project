@@ -39,13 +39,11 @@ import java.util.List;
 
 @Tag(name = "Project operations management")
 @RestController
-@RequestMapping(path = "/v1/projects", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(path = "/api/v1/projects", produces = MediaType.APPLICATION_JSON_VALUE)
 @AllArgsConstructor
 public class ProjectController {
 
     private final ProjectService projectService;
-    private final AttachmentService attachmentService;
-    private final UsersRestClient usersRestClient;
 
     @PostMapping("/create")
     @ResponseStatus(HttpStatus.CREATED)
@@ -58,7 +56,7 @@ public class ProjectController {
     })
     public ResponseEntity<CreateProjectResponse> createProject(@Parameter(description = "Create project request")
                                                                @RequestBody @Valid CreateProjectRequest request) {
-        return ResponseEntity.ok(projectService.createProject(request));
+        return ResponseEntity.status(HttpStatus.CREATED).body(projectService.createProject(request));
     }
 
     @GetMapping("/{projectId}")
@@ -153,9 +151,9 @@ public class ProjectController {
         return ResponseEntity.ok(projectService.updateStatus(request, projectId));
     }
 
-    @GetMapping("/users/{username}")
-    public ResponseEntity<GetUserResponse> getUser(@PathVariable("username") String username) {
-        System.out.println("Authentication: " + ((JwtAuthenticationToken) SecurityContextHolder.getContext().getAuthentication()).getToken().getTokenValue());
-        return ResponseEntity.ok(usersRestClient.getUserByUsername(username).get());
-    }
+//    @GetMapping("/users/{username}")
+//    public ResponseEntity<GetUserResponse> getUser(@PathVariable("username") String username) {
+//        System.out.println("Authentication: " + ((JwtAuthenticationToken) SecurityContextHolder.getContext().getAuthentication()).getToken().getTokenValue());
+//        return ResponseEntity.ok(usersRestClient.getUserByUsername(username).get());
+//    }
 }

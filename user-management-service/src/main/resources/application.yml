@@ -50,8 +50,10 @@ springdoc:
     url: /api-docs
   packages-to-scan: org.tasker.usermanagementservice
 
+grpc:
+  server:
+    port: 9091
+
 logging:
   level:
     org.springframework.security: DEBUG
-
-

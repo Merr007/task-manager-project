@@ -1,7 +1,7 @@
 package org.tasker.usermanagementservice.service;
 
 import org.keycloak.representations.idm.UserRepresentation;
-import org.tasker.usermanagementservice.web.dto.auth.*;
+import org.tasker.usermanagementservice.api.dto.auth.*;
 
 import java.util.List;
 
