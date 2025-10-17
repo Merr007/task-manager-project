@@ -16,7 +16,7 @@ import java.util.List;
 
 @RestController
 @Tag(name = "Project members operations management")
-@RequestMapping("/v1/projects/{projectId}/members")
+@RequestMapping("/api/v1/projects/{projectId}/members")
 @AllArgsConstructor
 public class ProjectMembersController {
 

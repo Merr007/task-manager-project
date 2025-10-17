@@ -17,7 +17,7 @@ import org.tasker.usermanagementservice.exception.*;
 import org.tasker.usermanagementservice.model.UserRole;
 import org.tasker.usermanagementservice.security.utils.KeycloakAuthFactory;
 import org.tasker.usermanagementservice.security.utils.UserSecurityUtils;
-import org.tasker.usermanagementservice.web.dto.auth.*;
+import org.tasker.usermanagementservice.api.dto.auth.*;
 
 import java.util.Collections;
 import java.util.List;

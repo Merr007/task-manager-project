@@ -11,7 +11,7 @@ import java.util.Optional;
 
 public class RestClientUsersRestClient implements UsersRestClient {
 
-    private static final String BASE_USERS = "/v1/users";
+    private static final String BASE_USERS = "/api/v1/users";
 
     private final RestClient restClient;
 

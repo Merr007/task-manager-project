@@ -6,6 +6,8 @@
                            http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.25.xsd">
 
     <include file="create-project-tables.xml" relativeToChangelogFile="true"/>
-    <include file="create-indexes-project-table.xml" relativeToChangelogFile="true"/>
+    <include file="create-indexes-project-tables.xml" relativeToChangelogFile="true"/>
+    <include file="create-task-tables.xml" relativeToChangelogFile="true"/>
+    <include file="create-indexes-task-tables.xml" relativeToChangelogFile="true"/>
 
 </databaseChangeLog>

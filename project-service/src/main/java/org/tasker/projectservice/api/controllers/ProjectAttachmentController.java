@@ -16,17 +16,17 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.tasker.projectservice.api.dto.add.AddProjectAttachmentResponse;
 import org.tasker.projectservice.api.dto.get.GetAttachmentUrlResponse;
-import org.tasker.projectservice.services.AttachmentService;
+import org.tasker.projectservice.services.ProjectAttachmentService;
 
 import java.util.List;
 
 @RestController
 @Tag(name = "Project attachment operations management")
-@RequestMapping("/v1/projects/{projectId}")
+@RequestMapping("/api/v1/projects/{projectId}")
 @RequiredArgsConstructor
 public class ProjectAttachmentController {
 
-    private final AttachmentService attachmentService;
+    private final ProjectAttachmentService attachmentService;
 
     @PostMapping(value = "/attachments/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @ResponseStatus(HttpStatus.CREATED)

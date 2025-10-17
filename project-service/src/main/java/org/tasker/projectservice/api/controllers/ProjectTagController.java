@@ -13,7 +13,7 @@ import org.tasker.projectservice.services.ProjectService;
 
 @RestController
 @Tag(name = "Project tags operations management")
-@RequestMapping(path = "/v1/projects/{projectId}/tags", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(path = "/api/v1/projects/{projectId}/tags", produces = MediaType.APPLICATION_JSON_VALUE)
 @AllArgsConstructor
 public class ProjectTagController {
 

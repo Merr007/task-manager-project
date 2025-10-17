@@ -25,6 +25,17 @@
             <artifactId>common</artifactId>
             <version>1.0</version>
             <scope>compile</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>net.devh</groupId>
+                    <artifactId>grpc-client-spring-boot-starter</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.tasker</groupId>
+            <artifactId>proto</artifactId>
+            <version>1.0</version>
         </dependency>
         <dependency>
             <groupId>io.jsonwebtoken</groupId>

@@ -15,11 +15,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.web.bind.annotation.*;
-import org.tasker.common.api.dto.user.GetUserResponse;
-import org.tasker.common.client.UsersRestClient;
 import org.tasker.common.exception.RestException;
 import org.tasker.common.validation.SortOrder;
 import org.tasker.projectservice.api.dto.create.CreateProjectRequest;
@@ -30,7 +26,6 @@ import org.tasker.projectservice.api.dto.update.UpdateProjectResponse;
 import org.tasker.projectservice.api.dto.update.UpdateStatusRequest;
 import org.tasker.projectservice.api.dto.update.UpdateStatusResponse;
 import org.tasker.projectservice.exception.NoSuchProjectException;
-import org.tasker.projectservice.services.AttachmentService;
 import org.tasker.projectservice.services.ProjectService;
 import org.tasker.projectservice.validation.ProjSortBy;
 
@@ -39,13 +34,11 @@ import java.util.List;
 
 @Tag(name = "Project operations management")
 @RestController
-@RequestMapping(path = "/v1/projects", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(path = "/api/v1/projects", produces = MediaType.APPLICATION_JSON_VALUE)
 @AllArgsConstructor
 public class ProjectController {
 
     private final ProjectService projectService;
-    private final AttachmentService attachmentService;
-    private final UsersRestClient usersRestClient;
 
     @PostMapping("/create")
     @ResponseStatus(HttpStatus.CREATED)
@@ -58,7 +51,7 @@ public class ProjectController {
     })
     public ResponseEntity<CreateProjectResponse> createProject(@Parameter(description = "Create project request")
                                                                @RequestBody @Valid CreateProjectRequest request) {
-        return ResponseEntity.ok(projectService.createProject(request));
+        return ResponseEntity.status(HttpStatus.CREATED).body(projectService.createProject(request));
     }
 
     @GetMapping("/{projectId}")
@@ -153,9 +146,9 @@ public class ProjectController {
         return ResponseEntity.ok(projectService.updateStatus(request, projectId));
     }
 
-    @GetMapping("/users/{username}")
-    public ResponseEntity<GetUserResponse> getUser(@PathVariable("username") String username) {
-        System.out.println("Authentication: " + ((JwtAuthenticationToken) SecurityContextHolder.getContext().getAuthentication()).getToken().getTokenValue());
-        return ResponseEntity.ok(usersRestClient.getUserByUsername(username).get());
-    }
+//    @GetMapping("/users/{username}")
+//    public ResponseEntity<GetUserResponse> getUser(@PathVariable("username") String username) {
+//        System.out.println("Authentication: " + ((JwtAuthenticationToken) SecurityContextHolder.getContext().getAuthentication()).getToken().getTokenValue());
+//        return ResponseEntity.ok(usersRestClient.getUserByUsername(username).get());
+//    }
 }

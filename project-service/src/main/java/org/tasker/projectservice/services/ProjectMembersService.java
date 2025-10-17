@@ -12,4 +12,7 @@ public interface ProjectMembersService {
     void removeProjectMember(Long projectId, Long memberId);
 
     List<GetMemberResponse> getAllProjectMembers(Long projectId, int limit, int offset);
+
+    List<String> getAllProjectMemberIds(Long projectId);
+
 }

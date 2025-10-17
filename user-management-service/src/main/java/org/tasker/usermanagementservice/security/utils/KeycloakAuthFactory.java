@@ -13,7 +13,7 @@ import org.keycloak.admin.client.Keycloak;
 import org.keycloak.admin.client.KeycloakBuilder;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import org.tasker.usermanagementservice.web.dto.auth.LoginRequest;
+import org.tasker.usermanagementservice.api.dto.auth.LoginRequest;
 
 @Component
 public class KeycloakAuthFactory {
