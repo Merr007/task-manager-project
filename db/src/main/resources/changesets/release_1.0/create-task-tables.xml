@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                           http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.25.xsd">
+
+    <changeSet id="release-1.0-task-tables-before" author="vladimir lis">
+        <tagDatabase tag="release-1.0-task-tables-before"/>
+    </changeSet>
+
+    <changeSet id="create-table-tasks" author="vladimir lis" context="metamodel">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="tasks"/>
+            </not>
+        </preConditions>
+        <createTable tableName="tasks">
+            <column name="id" type="bigint" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false" primaryKeyName="pk_tasks_id"/>
+            </column>
+            <column name="title" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="description" type="TEXT"/>
+            <column name="status" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="priority" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="due_date" type="TIMESTAMP WITHOUT TIME ZONE"/>
+            <column name="completion_date" type="TIMESTAMP WITHOUT TIME ZONE"/>
+            <column name="assignee_id" type="VARCHAR(150)"/>
+            <column name="project_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_at" type="TIMESTAMP WITHOUT TIME ZONE"/>
+            <column name="updated_at" type="TIMESTAMP WITHOUT TIME ZONE"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="create-table-task_attachments" author="vladimir lis" context="metamodel">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="task_attachments"/>
+            </not>
+        </preConditions>
+        <createTable tableName="task_attachments">
+            <column name="id" type="bigint" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false" primaryKeyName="pk_task_attachments_id"/>
+            </column>
+            <column name="task_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="filename" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="filesize" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="content_type" type="VARCHAR(255)"/>
+            <column name="upload_date" type="TIMESTAMP WITHOUT TIME ZONE"/>
+            <column name="file_path" type="VARCHAR(1000)"/>
+        </createTable>
+
+        <addForeignKeyConstraint baseTableName="task_attachments"
+                                 baseColumnNames="task_id"
+                                 constraintName="fk_task_attachments_task"
+                                 referencedTableName="tasks"
+                                 referencedColumnNames="id"/>
+    </changeSet>
+
+    <changeSet id="create-table-task_comments" author="vladimir lis" context="metamodel">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="task_comments"/>
+            </not>
+        </preConditions>
+        <createTable tableName="task_comments">
+            <column name="id" type="bigint" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false" primaryKeyName="pk_task_comments_id"/>
+            </column>
+            <column name="task_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="user_id" type="VARCHAR(150)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="content" type="TEXT"/>
+            <column name="created_at" type="TIMESTAMP WITHOUT TIME ZONE"/>
+            <column name="updated_at" type="TIMESTAMP WITHOUT TIME ZONE"/>
+        </createTable>
+
+        <addForeignKeyConstraint baseTableName="task_comments"
+                                 baseColumnNames="task_id"
+                                 constraintName="fk_task_comments_task"
+                                 referencedTableName="tasks"
+                                 referencedColumnNames="id"/>
+    </changeSet>
+
+    <changeSet id="release-1.0-task-tables-applied" author="vladimir lis">
+        <tagDatabase tag="release-1.0-task-tables-applied"/>
+    </changeSet>
+
+</databaseChangeLog>

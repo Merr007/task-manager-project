@@ -1,0 +1,59 @@
+server:
+  port: 8081
+spring:
+  application:
+    name: user-management-service
+  autoconfigure:
+    exclude: org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration, org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8090/realms/tasker_realm
+          jwk-set-uri: http://localhost:8090/realms/tasker_realm/protocol/openid-connect/certs
+      client:
+        registration:
+          keycloak:
+            client-id: tasker-user-management
+            client-secret: QXPzpwKeE8A4LzscQpAjagsuS48Yck7x
+            authorization-grant-type: authorization_code
+            scope: openid, profile
+        provider:
+          keycloak:
+            issuer-uri: http://localhost:8090/realms/tasker_realm
+            authorization-uri: http://localhost:8090/realms/tasker_realm/protocol/openid-connect/auth
+            token-uri: http://localhost:8090/realms/tasker_realm/protocol/openid-connect/token
+            user-info-uri: http://localhost:8090/realms/tasker_realm/protocol/openid-connect/userinfo
+            jwk-set-uri: http://localhost:8090/realms/tasker_realm/protocol/openid-connect/certs
+            user-name-attribute: preferred_username
+  main:
+    banner-mode: console
+
+keycloak:
+  auth-server-url: http://localhost:8090
+  realm: tasker_realm
+  username: ${KEYCLOAK_ADMIN_USER:admin}
+  password: ${KEYCLOAK_ADMIN_PASSWORD:admin}
+
+# Open API
+springdoc:
+  api-docs:
+    enabled: true
+    path: /api-docs
+  swagger-ui:
+    oauth:
+      use-pkce-with-authorization-code-grant: true
+      client-id: tasker-user-management
+    enabled: true
+    path: /swagger-ui.html
+    config-url: /api-docs/swagger-config
+    url: /api-docs
+  packages-to-scan: org.tasker.usermanagementservice
+
+grpc:
+  server:
+    port: 9091
+
+logging:
+  level:
+    org.springframework.security: DEBUG

@@ -1,0 +1,32 @@
+syntax = "proto3";
+
+package org.tasker.common.grpc;
+
+option java_multiple_files = true;
+option java_package = "org.tasker.common.grpc";
+option java_outer_classname = "UsersProto";
+
+service UserService {
+  rpc GetUserById(GetGrpcUserRequest) returns (GetGrpcUserResponse);
+  rpc GetBatchUsersById(GetBatchUsersRequest) returns (GetBatchUsersResponse);
+}
+
+message GetGrpcUserRequest {
+  string user_id = 1;
+}
+
+message GetGrpcUserResponse {
+  string user_id = 1;
+  string username = 2;
+  string firstName = 3;
+  string lastName = 4;
+  string email = 5;
+}
+
+message GetBatchUsersRequest {
+  repeated GetGrpcUserRequest user_ids = 1;
+}
+
+message GetBatchUsersResponse {
+  repeated GetGrpcUserResponse users = 1;
+}

@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                           http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.25.xsd">
+    <changeSet id="release-1.0-project-audit-before" author="vladimir lis">
+        <tagDatabase tag="release-1.0-project-audit-before"/>
+    </changeSet>
+
+    <changeSet id="create-project-audit-table" author="vladimir lis">
+        <createTable tableName="project_audit">
+            <column name="id" type="bigint">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="project_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="action" type="VARCHAR(50">
+                <constraints nullable="false"/>
+            </column>
+            <column name="createdAt" type="TIMESTAMP WITHOUT TIME ZONE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="project_name" type="VARCHAR(100)"/>
+        </createTable>
+        <rollback>
+            <dropTable tableName="project_audit" cascadeConstraints="true"/>
+        </rollback>
+    </changeSet>
+    
+    <changeSet id="create-project-audit-sequence" author="vladimir lis">
+        <createSequence sequenceName="project-audit-sequence" startValue="1" incrementBy="1"/>
+        <rollback>
+            <dropSequence sequenceName="project-audit-sequence"/>
+        </rollback>
+    </changeSet>
+    
+    <changeSet id="create_project-insert-trigger" author="vladimir lis">
+        <createProcedure procedureName="audit-project-insert">
+            CREATE OR REPLACE FUNCTION audit_project_insert()
+            RETURNS TRIGGER AS $$
+            BEGIN
+                INSERT INTO project_audit(id, project_id, action, created_at, project_name)
+                VALUES (nextval('project_audit_seq'), NEW.id, 'CREATED', NOW(), NEW.name);
+                RETURN NEW;
+            END;
+            $$ LANGUAGE plpgsql;
+        </createProcedure>
+        <rollback>
+            <dropProcedure procedureName="audit_project_insert"/>
+        </rollback>
+    </changeSet>
+    
+    <changeSet id="create-trigger-audit-project-insert" author="vladimir lis">
+        <createProcedure procedureName="create_trigger_audit_project-insert">
+            CREATE OR REPLACE FUNCTION create_trigger_audit_project_insert()
+            RETURNS VOID AS $$
+            BEGIN
+                IF NOT EXISTS (SELECT 1 FROM pg_trigger WHERE tgname = 'project_insert_audit_trigger') THEN
+                    CREATE TRIGGER project_insert_audit_trigger
+                    AFTER INSERT ON projects
+                    FOR EACH ROW
+                    EXECUTE PROCEDURE audit_project_insert();
+                END IF;
+            END;
+            $$ LANGUAGE plpgsql;
+        </createProcedure>
+        <sql dbms="postgresql" endDelimiter=";">
+            SELECT create_trigger_audit_project_insert();
+            DROP FUNCTION create_trigger_audit_project_insert();
+        </sql>
+    </changeSet>
+    
+    <changeSet id="create-project-delete-trigger" author="vladimir lis">
+        <createProcedure procedureName="audit-project-delete">
+            CREATE OR REPLACE FUNCTION audit_project_delete()
+            RETURNS TRIGGER AS $$
+            BEGIN
+                INSERT INTO project_audit (id, project_id, action, created_at, project_name)
+                VALUES (nextval('project_audit_seq'), NEW.id, 'DELETED', NOW(), NEW.name);
+                RETURN NEW;
+            END;
+        $$ LANGUAGE plpgsql;
+        </createProcedure>
+        <rollback>
+            <dropProcedure procedureName="audit_project_delete"/>
+        </rollback>
+    </changeSet>
+    
+    <changeSet id="create-trigger-audit-project-delete" author="vladimir lis">
+        <createProcedure procedureName="create_trigger_audit_project_delete">
+            CREATE OR REPLACE FUNCTION create_trigger_audit_project_delete()
+            RETURNS VOID AS $$
+            BEGIN
+                IF NOT EXISTS (SELECT 1 FROM pg_trigger WHERE tgname = 'project_delete_audit_trigger') THEN
+                    CREATE TRIGGER project_delete_audit_trigger
+                    AFTER DELETE ON projects
+                    FOR EACH ROW
+                    EXECUTE PROCEDURE audit_project_delete();
+                END IF;
+            END;
+            $$ LANGUAGE plpgsql;
+        </createProcedure>
+        <sql dbms="postgresql" endDelimiter=";">
+            SELECT create_trigger_audit_project_delete();
+            DROP FUNCTION create_trigger_audit_project_delete();
+        </sql>
+    </changeSet>
+
+    <changeSet id="release-1.0-project-audit-applied" author="vladimir lis">
+        <tagDatabase tag="release-1.0-project-audit-applied"/>
+    </changeSet>
+</databaseChangeLog>

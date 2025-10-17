@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                           http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.25.xsd">
+
+    <changeSet id="release-1.0-indexes-task-tables-before" author="vladimir lis">
+        <tagDatabase tag="release-1.0-indexes-task-tables-before"/>
+    </changeSet>
+
+    <changeSet id="create-index-tasks-project-id" author="vladimir lis">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <indexExists tableName="tasks" indexName="IDX_TASKS_PROJECT_ID"/>
+            </not>
+            <tableExists tableName="tasks"/>
+            <columnExists tableName="tasks" columnName="project_id"/>
+        </preConditions>
+        <createIndex indexName="IDX_TASKS_PROJECT_ID" tableName="tasks">
+            <column name="project_id"/>
+        </createIndex>
+        <rollback/>
+    </changeSet>
+
+    <changeSet id="create-index-tasks-assignee-id" author="vladimir lis">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <indexExists tableName="tasks" indexName="IDX_TASKS_ASSIGNEE_ID"/>
+            </not>
+            <tableExists tableName="tasks"/>
+            <columnExists tableName="tasks" columnName="assignee_id"/>
+        </preConditions>
+        <createIndex indexName="IDX_TASKS_ASSIGNEE_ID" tableName="tasks">
+            <column name="assignee_id"/>
+        </createIndex>
+        <rollback/>
+    </changeSet>
+
+    <changeSet id="create-index-tasks-status" author="vladimir lis">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <indexExists tableName="tasks" indexName="IDX_TASKS_STATUS"/>
+            </not>
+            <tableExists tableName="tasks"/>
+            <columnExists tableName="tasks" columnName="status"/>
+        </preConditions>
+        <createIndex indexName="IDX_TASKS_STATUS" tableName="tasks">
+            <column name="status"/>
+        </createIndex>
+        <rollback/>
+    </changeSet>
+
+    <changeSet id="create-index-tasks-created-at" author="vladimir lis">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <indexExists tableName="tasks" indexName="IDX_TASKS_CREATED_AT"/>
+            </not>
+            <tableExists tableName="tasks"/>
+            <columnExists tableName="tasks" columnName="created_at"/>
+        </preConditions>
+        <createIndex indexName="IDX_TASKS_CREATED_AT" tableName="tasks">
+            <column name="created_at"/>
+        </createIndex>
+        <rollback/>
+    </changeSet>
+
+    <changeSet id="create-index-tasks-priority" author="vladimir lis">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <indexExists tableName="tasks" indexName="IDX_TASKS_PRIORITY"/>
+            </not>
+            <tableExists tableName="tasks"/>
+            <columnExists tableName="tasks" columnName="priority"/>
+        </preConditions>
+        <createIndex indexName="IDX_TASKS_PRIORITY" tableName="tasks">
+            <column name="priority"/>
+        </createIndex>
+        <rollback/>
+    </changeSet>
+
+    <changeSet id="create-index-tasks-due-date" author="vladimir lis">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <indexExists tableName="tasks" indexName="IDX_TASKS_DUE_DATE"/>
+            </not>
+            <tableExists tableName="tasks"/>
+            <columnExists tableName="tasks" columnName="due_date"/>
+        </preConditions>
+        <createIndex indexName="IDX_TASKS_DUE_DATE" tableName="tasks">
+            <column name="due_date"/>
+        </createIndex>
+        <rollback/>
+    </changeSet>
+
+    <changeSet id="create-index-tasks-updated-at" author="vladimir lis">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <indexExists tableName="tasks" indexName="IDX_TASKS_UPDATED_AT"/>
+            </not>
+            <tableExists tableName="tasks"/>
+            <columnExists tableName="tasks" columnName="updated_at"/>
+        </preConditions>
+        <createIndex indexName="IDX_TASKS_UPDATED_AT" tableName="tasks">
+            <column name="updated_at"/>
+        </createIndex>
+        <rollback/>
+    </changeSet>
+
+    <changeSet id="create-index-task-attachments-task-id" author="vladimir lis">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <indexExists tableName="task_attachments" indexName="IDX_TASK_ATTACHMENTS_TASK_ID"/>
+            </not>
+            <tableExists tableName="task_attachments"/>
+            <columnExists tableName="task_attachments" columnName="task_id"/>
+        </preConditions>
+        <createIndex indexName="IDX_TASK_ATTACHMENTS_TASK_ID" tableName="task_attachments">
+            <column name="task_id"/>
+        </createIndex>
+        <rollback/>
+    </changeSet>
+
+    <changeSet id="create-index-task-comments-task-id" author="vladimir lis">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <indexExists tableName="task_comments" indexName="IDX_TASK_COMMENTS_TASK_ID"/>
+            </not>
+            <tableExists tableName="task_comments"/>
+            <columnExists tableName="task_comments" columnName="task_id"/>
+        </preConditions>
+        <createIndex indexName="IDX_TASK_COMMENTS_TASK_ID" tableName="task_comments">
+            <column name="task_id"/>
+        </createIndex>
+        <rollback/>
+    </changeSet>
+
+    <changeSet id="release-1.0-indexes-task-tables-applied" author="vladimir lis">
+        <tagDatabase tag="release-1.0-indexes-task-tables-applied"/>
+    </changeSet>
+
+</databaseChangeLog>

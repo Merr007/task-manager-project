@@ -1,0 +1,107 @@
+server:
+  port: 8082
+  tomcat:
+    max-swallow-size: 600MB
+
+grpc:
+  server:
+    port: 9092
+
+  client:
+    user-management-service:
+      address: 'static://localhost:9091'
+
+spring:
+  application:
+    name: project-service
+
+  servlet:
+    multipart:
+      max-file-size: 500MB          # Максимальный размер одного файла
+      max-request-size: 600MB      # Максимальный размер всего запроса
+      file-size-threshold: 2KB     # Порог для записи на диск
+      enabled: true
+
+  autoconfigure:
+    exclude: org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration
+
+  main:
+    banner-mode: console
+
+  devtools:
+    restart:
+      enabled: false
+  
+  datasource:
+    url: jdbc:postgresql://localhost:5432/tasker_db?currentSchema=tasker_sc
+    username: tm_user
+    password: tasker
+    driver-class-name: org.postgresql.Driver
+  
+  jpa:
+    hibernate:
+      ddl-auto: none
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+    open-in-view: false
+
+#Security
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8090/realms/tasker_realm
+          jwk-set-uri: http://localhost:8090/realms/tasker_realm/protocol/openid-connect/certs
+      client:
+        provider:
+          keycloak:
+            issuer-uri: http://localhost:8090/realms/tasker_realm
+        registration:
+          project-service:
+            provider: keycloak
+            client-id: project-service-internal
+            client-secret: MzfiQQvU7UBXABih2GQoCPOU3gJ2ddwR
+            authorization-grant-type: client_credentials
+            scope:
+              - openid
+springdoc:
+  api-docs:
+    enabled: true
+    path: /api-docs
+  swagger-ui:
+    enabled: true
+    path: /swagger-ui.html
+    config-url: /api-docs/swagger-config
+    url: /api-docs
+  packages-to-scan: org.tasker.projectservice
+
+tasker:
+  services:
+    users:
+      url: ${USER_MANAGEMENT_SERVICE_URL:http://localhost:8081}
+  auth:
+    client:
+      registration-id: project-service
+      principal: internal
+
+
+#AWS Minio
+aws:
+  region: eu-central-1
+  endpoint:
+    url: ${AWS_MINIO_URL:http://localhost:9000}
+  credentials:
+    access-key: tm_user
+    secret-key: tasker_minio
+  s3:
+    bucket: tasker-attachments
+    signature-duration: 20
+
+# Logging
+logging:
+  level:
+    org.springframework.security: DEBUG
+    org.tasker.projectservice: DEBUG
