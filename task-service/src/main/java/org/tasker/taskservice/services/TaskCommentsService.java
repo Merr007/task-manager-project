@@ -8,11 +8,9 @@ import java.util.List;
 
 public interface TaskCommentsService {
 
-    void createComment(Long projectId, Long taskId, CreateTaskCommentRequest request);
+    void createComment(Long taskId, CreateTaskCommentRequest request);
 
-    List<GetTaskCommentResponse> getComments(Long projectId, Long taskId, Pageable pageable);
+    List<GetTaskCommentResponse> getComments(Long taskId, Pageable pageable, String userId);
 
-    List<GetTaskCommentResponse> getCommentsByUserId(String userId);
-
-    void deleteComment(Long projectId, Long taskId, Long commentId, String userId);
+    void deleteComment(Long taskId, Long commentId, String userId);
 }

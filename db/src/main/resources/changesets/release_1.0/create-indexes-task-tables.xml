@@ -135,20 +135,6 @@
         <rollback/>
     </changeSet>
 
-    <changeSet id="create-index-task-history-task-id" author="vladimir lis">
-        <preConditions onFail="MARK_RAN">
-            <not>
-                <indexExists tableName="task_history" indexName="IDX_TASK_HISTORY_TASK_ID"/>
-            </not>
-            <tableExists tableName="task_history"/>
-            <columnExists tableName="task_history" columnName="task_id"/>
-        </preConditions>
-        <createIndex indexName="IDX_TASK_HISTORY_TASK_ID" tableName="task_history">
-            <column name="task_id"/>
-        </createIndex>
-        <rollback/>
-    </changeSet>
-
     <changeSet id="release-1.0-indexes-task-tables-applied" author="vladimir lis">
         <tagDatabase tag="release-1.0-indexes-task-tables-applied"/>
     </changeSet>

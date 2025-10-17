@@ -30,7 +30,7 @@ import java.util.List;
 
 @Tag(name = "Task operations management")
 @RestController
-@RequestMapping(path = "/api/v1/projects/{projectId}/tasks", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(path = "/api/v1/tasks", produces = MediaType.APPLICATION_JSON_VALUE)
 @AllArgsConstructor
 public class TaskController {
 
@@ -45,11 +45,9 @@ public class TaskController {
                             schema = @Schema(implementation = CreateTaskResponse.class))
             )
     })
-    public ResponseEntity<CreateTaskResponse> createTask(@Parameter(description = "Project identifier", required = true)
-                                                         @PathVariable Long projectId,
-                                                         @Parameter(description = "Create task request")
+    public ResponseEntity<CreateTaskResponse> createTask(@Parameter(description = "Create task request")
                                                          @RequestBody @Valid CreateTaskRequest request) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(taskService.createTask(projectId, request));
+        return ResponseEntity.status(HttpStatus.CREATED).body(taskService.createTask(request));
     }
 
     @PostMapping("/{taskId}/assign")
@@ -58,13 +56,11 @@ public class TaskController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Task successfully assigned")
     })
-    public void addAssignee(@Parameter(description = "Project identifier", required = true)
-                            @PathVariable Long projectId,
-                            @Parameter(description = "Task identifier", required = true)
+    public void addAssignee(@Parameter(description = "Task identifier", required = true)
                             @PathVariable Long taskId,
                             @Parameter(description = "Add task's assignee")
                             @RequestBody @Valid AddAssigneeRequest request) {
-        taskService.addAssignee(projectId, taskId, request);
+        taskService.addAssignee(taskId, request);
     }
 
     @DeleteMapping("/{taskId}/delete")
@@ -73,11 +69,9 @@ public class TaskController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "Task successfully deleted")
     })
-    public void deleteTask(@Parameter(description = "Project identifier", required = true)
-                           @PathVariable Long projectId,
-                           @Parameter(description = "Task identifier", required = true)
+    public void deleteTask(@Parameter(description = "Task identifier", required = true)
                            @PathVariable Long taskId) {
-        taskService.deleteTask(projectId, taskId);
+        taskService.deleteTask(taskId);
     }
 
     @GetMapping("/{taskId}")
@@ -88,14 +82,12 @@ public class TaskController {
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = GetTaskResponse.class)))
     })
-    public ResponseEntity<GetTaskResponse> getTask(@Parameter(description = "Project identifier", required = true)
-                                                   @PathVariable Long projectId,
-                                                   @Parameter(description = "Task identifier", required = true)
+    public ResponseEntity<GetTaskResponse> getTask(@Parameter(description = "Task identifier", required = true)
                                                    @PathVariable Long taskId) {
-        return ResponseEntity.ok(taskService.getTask(projectId, taskId));
+        return ResponseEntity.ok(taskService.getTask(taskId));
     }
 
-    @GetMapping
+    @GetMapping("/project/{projectId}")
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "Get all tasks for project")
     @ApiResponses(value = {
@@ -139,12 +131,10 @@ public class TaskController {
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = UpdateTaskResponse.class)))
     })
-    public ResponseEntity<UpdateTaskResponse> updateTask(@Parameter(description = "Project identifier", required = true)
-                                                         @PathVariable Long projectId,
-                                                         @Parameter(description = "Task identifier", required = true)
+    public ResponseEntity<UpdateTaskResponse> updateTask(@Parameter(description = "Task identifier", required = true)
                                                          @PathVariable Long taskId,
                                                          @Parameter(description = "Update task request")
                                                          @RequestBody @Valid UpdateTaskRequest request) {
-        return ResponseEntity.ok(taskService.updateTask(projectId, taskId, request));
+        return ResponseEntity.ok(taskService.updateTask(taskId, request));
     }
 }

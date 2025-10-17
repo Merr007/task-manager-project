@@ -3,6 +3,7 @@ package org.tasker.taskservice.services;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.tasker.taskservice.api.dto.create.CreateTaskCommentRequest;
@@ -11,6 +12,7 @@ import org.tasker.taskservice.data.entities.Task;
 import org.tasker.taskservice.data.entities.TaskComment;
 import org.tasker.taskservice.data.repositories.TaskCommentRepository;
 import org.tasker.taskservice.data.repositories.TaskRepository;
+import org.tasker.taskservice.data.specification.TaskCommentSpecification;
 import org.tasker.taskservice.exception.NoSuchTaskException;
 import org.tasker.taskservice.mappers.TaskMapper;
 
@@ -28,11 +30,11 @@ public class TaskCommentsServiceImpl implements TaskCommentsService {
 
     @Override
     @Transactional
-    public void createComment(Long projectId, Long taskId, CreateTaskCommentRequest request) {
-        Task task = taskRepository.findByTaskIdAndProjectId(taskId, projectId)
+    public void createComment(Long taskId, CreateTaskCommentRequest request) {
+        Task task = taskRepository.findById(taskId)
                 .orElseThrow(() -> new NoSuchTaskException("No such task with id " + taskId));
 
-        List<String> projectMembers = grpcClientProjectService.getProjectMembers(projectId);
+        List<String> projectMembers = grpcClientProjectService.getProjectMembers(task.getProjectId());
 
         if (!projectMembers.contains(request.userId())) {
             throw new RuntimeException("User is not a member of the project");
@@ -50,27 +52,23 @@ public class TaskCommentsServiceImpl implements TaskCommentsService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<GetTaskCommentResponse> getComments(Long projectId, Long taskId, Pageable pageable) {
-        taskRepository.findByTaskIdAndProjectId(taskId, projectId)
+    public List<GetTaskCommentResponse> getComments(Long taskId, Pageable pageable, String userId) {
+        taskRepository.findById(taskId)
                 .orElseThrow(() -> new NoSuchTaskException("No such task with id " + taskId));
 
-        return taskCommentRepository.findByTaskId(taskId, pageable).getContent().stream()
-                .map(taskMapper::toGetTaskCommentResponse)
-                .toList();
-    }
-
-    @Override
-    @Transactional(readOnly = true)
-    public List<GetTaskCommentResponse> getCommentsByUserId(String userId) {
-        return taskCommentRepository.findByUserId(userId).stream()
+        Specification<TaskComment> spec = TaskCommentSpecification.builder()
+                .withTaskId(taskId)
+                .withUserId(userId)
+                .build();
+        return taskCommentRepository.findAll(spec, pageable).stream()
                 .map(taskMapper::toGetTaskCommentResponse)
                 .toList();
     }
 
     @Override
     @Transactional
-    public void deleteComment(Long projectId, Long taskId, Long commentId, String userId) {
-        taskRepository.findByTaskIdAndProjectId(taskId, projectId)
+    public void deleteComment(Long taskId, Long commentId, String userId) {
+        taskRepository.findById(taskId)
                 .orElseThrow(() -> new NoSuchTaskException("No such task with id " + taskId));
 
         TaskComment comment = taskCommentRepository.findByIdAndTaskIdAndUserId(commentId, taskId, userId)

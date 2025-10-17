@@ -1,4 +1,4 @@
-package org.tasker.projectservice.configuration;
+package org.tasker.common.s3.properties;
 
 import lombok.Getter;
 import lombok.Setter;

@@ -37,6 +37,7 @@
         <google-protobuf.version>4.28.3</google-protobuf.version>
         <spring-grpc.version>3.1.0.RELEASE</spring-grpc.version>
         <jakarta.annotation-api.version>3.0.0</jakarta.annotation-api.version>
+        <mockito.version>5.7.0</mockito.version>
     </properties>
 
     <dependencyManagement>
@@ -234,9 +235,18 @@
             <artifactId>lombok</artifactId>
             <optional>true</optional>
         </dependency>
+
+        <!-- Test Dependencies -->
         <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-test</artifactId>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <version>${mockito.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-junit-jupiter</artifactId>
+            <version>${mockito.version}</version>
             <scope>test</scope>
         </dependency>
         <!--        <dependency>-->

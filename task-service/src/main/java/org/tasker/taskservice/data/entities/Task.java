@@ -61,10 +61,6 @@ public class Task {
     @ToString.Exclude
     private List<TaskComment> comments = new ArrayList<>();
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "task", cascade = CascadeType.ALL, orphanRemoval = true)
-    @ToString.Exclude
-    private List<TaskHistory> history = new ArrayList<>();
-
     @CreationTimestamp
     private LocalDateTime createdAt;
 

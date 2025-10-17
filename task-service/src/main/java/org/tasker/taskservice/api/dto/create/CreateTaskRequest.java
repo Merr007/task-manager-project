@@ -16,6 +16,10 @@ public record CreateTaskRequest(
 
         @NotNull(message = "Task priority must be not null")
         @Schema(description = "Task priority", allowableValues = {"LOW", "MEDIUM", "HIGH", "URGENT"})
-        TaskPriority priority
+        TaskPriority priority,
+
+        @NotNull(message = "Project identifier must be not null")
+        @Schema(description = "Project identifier")
+        Long projectId
 ) {
 }

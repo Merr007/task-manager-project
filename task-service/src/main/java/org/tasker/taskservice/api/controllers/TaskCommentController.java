@@ -23,7 +23,7 @@ import java.util.List;
 
 @Tag(name = "Task comments operations management")
 @RestController
-@RequestMapping(path = "/api/v1/projects/{projectId}/tasks/{taskId}/comments",
+@RequestMapping(path = "/api/v1/tasks/{taskId}/comments",
         produces = MediaType.APPLICATION_JSON_VALUE)
 @AllArgsConstructor
 public class TaskCommentController {
@@ -36,13 +36,11 @@ public class TaskCommentController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Comment successfully created")
     })
-    public void createComment(@Parameter(description = "Project identifier", required = true)
-                              @PathVariable Long projectId,
-                              @Parameter(description = "Task identifier", required = true)
+    public void createComment(@Parameter(description = "Task identifier", required = true)
                               @PathVariable Long taskId,
                               @Parameter(description = "Create comment request")
                               @RequestBody @Valid CreateTaskCommentRequest request) {
-        taskCommentsService.createComment(projectId, taskId, request);
+        taskCommentsService.createComment(taskId, request);
     }
 
     @GetMapping
@@ -53,35 +51,19 @@ public class TaskCommentController {
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = GetTaskCommentResponse.class)))
     })
-    public ResponseEntity<List<GetTaskCommentResponse>> getComments(@Parameter(description = "Project identifier", required = true)
-                                                                    @PathVariable Long projectId,
-                                                                    @Parameter(description = "Task identifier", required = true)
+    public ResponseEntity<List<GetTaskCommentResponse>> getComments(@Parameter(description = "Task identifier", required = true)
                                                                     @PathVariable Long taskId,
                                                                     @Parameter(description = "Page offset")
                                                                     @RequestParam(required = false, defaultValue = "0")
                                                                     int offset,
                                                                     @Parameter(description = "Size of page")
                                                                     @RequestParam(required = false, defaultValue = "10")
-                                                                    int limit) {
+                                                                    int limit,
+                                                                    @Parameter(description = "User identifier")
+                                                                    @RequestParam(required = false)
+                                                                    String userId) {
         Pageable pageable = PageRequest.of(offset, limit);
-        return ResponseEntity.ok(taskCommentsService.getComments(projectId, taskId, pageable));
-    }
-
-    @GetMapping("/user/{userId}")
-    @ResponseStatus(HttpStatus.OK)
-    @Operation(summary = "Get comments by user")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Comments retrieved successfully",
-                    content = @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = GetTaskCommentResponse.class)))
-    })
-    public ResponseEntity<List<GetTaskCommentResponse>> getCommentsByUser(@Parameter(description = "Project identifier", required = true)
-                                                                          @PathVariable Long projectId,
-                                                                          @Parameter(description = "Task identifier", required = true)
-                                                                          @PathVariable Long taskId,
-                                                                          @Parameter(description = "User identifier", required = true)
-                                                                          @PathVariable String userId) {
-        return ResponseEntity.ok(taskCommentsService.getCommentsByUserId(userId));
+        return ResponseEntity.ok(taskCommentsService.getComments(taskId, pageable, userId));
     }
 
     @DeleteMapping("/{commentId}/delete")
@@ -90,14 +72,12 @@ public class TaskCommentController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "Comment successfully deleted")
     })
-    public void deleteComment(@Parameter(description = "Project identifier", required = true)
-                              @PathVariable Long projectId,
-                              @Parameter(description = "Task identifier", required = true)
+    public void deleteComment(@Parameter(description = "Task identifier", required = true)
                               @PathVariable Long taskId,
                               @Parameter(description = "Comment identifier", required = true)
                               @PathVariable Long commentId,
                               @Parameter(description = "User identifier", required = true)
                               @RequestHeader("X-User-Id") String userId) {
-        taskCommentsService.deleteComment(projectId, taskId, commentId, userId);
+        taskCommentsService.deleteComment(taskId, commentId, userId);
     }
 }

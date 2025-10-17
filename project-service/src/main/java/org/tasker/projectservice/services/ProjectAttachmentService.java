@@ -8,7 +8,7 @@ import org.tasker.projectservice.api.dto.get.GetAttachmentUrlResponse;
 
 import java.util.List;
 
-public interface AttachmentService {
+public interface ProjectAttachmentService {
 
     AddProjectAttachmentResponse uploadAttachment(MultipartFile file, Long projectId);
 

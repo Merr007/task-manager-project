@@ -99,35 +99,6 @@
                                  referencedColumnNames="id"/>
     </changeSet>
 
-    <changeSet id="create-table-task_history" author="vladimir lis" context="metamodel">
-        <preConditions onFail="MARK_RAN">
-            <not>
-                <tableExists tableName="task_history"/>
-            </not>
-        </preConditions>
-        <createTable tableName="task_history">
-            <column name="id" type="bigint" autoIncrement="true">
-                <constraints primaryKey="true" nullable="false" primaryKeyName="pk_task_history_id"/>
-            </column>
-            <column name="task_id" type="bigint">
-                <constraints nullable="false"/>
-            </column>
-            <column name="changed_by" type="VARCHAR(150)"/>
-            <column name="change_type" type="VARCHAR(50)">
-                <constraints nullable="false"/>
-            </column>
-            <column name="old_value" type="TEXT"/>
-            <column name="new_value" type="TEXT"/>
-            <column name="change_date" type="TIMESTAMP WITHOUT TIME ZONE"/>
-        </createTable>
-
-        <addForeignKeyConstraint baseTableName="task_history"
-                                 baseColumnNames="task_id"
-                                 constraintName="fk_task_history_task"
-                                 referencedTableName="tasks"
-                                 referencedColumnNames="id"/>
-    </changeSet>
-
     <changeSet id="release-1.0-task-tables-applied" author="vladimir lis">
         <tagDatabase tag="release-1.0-task-tables-applied"/>
     </changeSet>

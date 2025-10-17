@@ -1,9 +1,8 @@
-package org.tasker.projectservice.api.dto.get;
+package org.tasker.taskservice.api.dto.get;
 
 public record GetAttachmentUrlResponse(
         Long id,
         String fileName,
-        String url,
-        long fileSize
+        String url
 ) {
 }

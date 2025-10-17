@@ -2,6 +2,7 @@ package org.tasker.taskservice.data.repositories;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.tasker.taskservice.data.entities.TaskComment;
 
@@ -15,4 +16,6 @@ public interface TaskCommentRepository extends JpaRepository<TaskComment, Long> 
     List<TaskComment> findByUserId(String userId);
 
     Optional<TaskComment> findByIdAndTaskIdAndUserId(Long id, Long taskId, String userId);
+
+    List<TaskComment> findAll(Specification<TaskComment> spec, Pageable pageable);
 }

@@ -7,6 +7,9 @@ spring:
   application:
     name: task-service
 
+  main:
+    banner-mode: console
+
   servlet:
     multipart:
       max-file-size: 500MB          # Максимальный размер одного файла
@@ -82,7 +85,7 @@ aws:
     access-key: tm_user
     secret-key: tasker_minio
   s3:
-    bucket: tasker-attachments
+    bucket: task-attachments
     signature-duration: 20
 
 grpc:

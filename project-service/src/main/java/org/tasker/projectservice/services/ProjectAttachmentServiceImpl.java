@@ -6,18 +6,18 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+import org.tasker.common.s3.exception.S3ObjectNotFoundException;
+import org.tasker.common.s3.exception.S3UploadException;
+import org.tasker.common.s3.properties.AwsProperties;
+import org.tasker.common.s3.utils.S3ProviderUtils;
 import org.tasker.projectservice.api.dto.add.AddProjectAttachmentResponse;
 import org.tasker.projectservice.api.dto.get.AttachmentDownloadResponse;
 import org.tasker.projectservice.api.dto.get.GetAttachmentUrlResponse;
-import org.tasker.projectservice.configuration.AwsProperties;
 import org.tasker.projectservice.data.entities.Project;
 import org.tasker.projectservice.data.entities.ProjectAttachment;
 import org.tasker.projectservice.data.repositories.ProjectAttachmentRepository;
 import org.tasker.projectservice.data.repositories.ProjectRepository;
 import org.tasker.projectservice.exception.NoSuchProjectException;
-import org.tasker.projectservice.exception.S3ObjectNotFoundException;
-import org.tasker.projectservice.exception.S3UploadException;
-import org.tasker.projectservice.utils.S3ProviderUtils;
 import software.amazon.awssdk.core.ResponseInputStream;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
@@ -28,20 +28,18 @@ import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import software.amazon.awssdk.services.s3.presigner.S3Presigner;
 import software.amazon.awssdk.services.s3.presigner.model.GetObjectPresignRequest;
 import software.amazon.awssdk.services.s3.presigner.model.PresignedGetObjectRequest;
-import software.amazon.awssdk.services.s3.presigner.model.PutObjectPresignRequest;
 import software.amazon.awssdk.services.s3.presigner.model.PresignedPutObjectRequest;
-
-import java.time.Duration;
+import software.amazon.awssdk.services.s3.presigner.model.PutObjectPresignRequest;
 
 import java.io.IOException;
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class AttachmentServiceImpl implements AttachmentService {
+public class ProjectAttachmentServiceImpl implements ProjectAttachmentService {
 
     private final S3Client s3Client;
     private final S3Presigner s3Presigner;
@@ -86,7 +84,7 @@ public class AttachmentServiceImpl implements AttachmentService {
         ProjectAttachment attachment = getProjectAttachmentOrElseThrow(attachmentId, projectId);
 
         try {
-            GetObjectRequest getObjectRequest = S3ProviderUtils.getObjectRequest(awsProperties.getS3().getBucket(), attachment);
+            GetObjectRequest getObjectRequest = S3ProviderUtils.getObjectRequest(awsProperties.getS3().getBucket(), attachment.getFilePath());
 
             ResponseInputStream<GetObjectResponse> s3Object = s3Client.getObject(getObjectRequest);
 
@@ -113,7 +111,7 @@ public class AttachmentServiceImpl implements AttachmentService {
             String url = getObjectPresignedUrl(attachment);
 
             log.info("Generated download URL for attachment: {}", attachment.getFilename());
-            return new GetAttachmentUrlResponse(attachment.getId(), attachment.getFilename(), url);
+            return new GetAttachmentUrlResponse(attachment.getId(), attachment.getFilename(), url, attachment.getFilesize());
         } catch (Exception e) {
             log.error("Error generating download URL for attachment {}: {}", attachment.getFilename(), e.getMessage(), e);
             throw new S3ObjectNotFoundException("Не удалось сгенерировать URL для скачивания файла: " + e.getMessage());
@@ -136,7 +134,7 @@ public class AttachmentServiceImpl implements AttachmentService {
                 .build();
 
         PutObjectPresignRequest presignRequest = PutObjectPresignRequest.builder()
-                .signatureDuration(Duration.ofMinutes(15))
+                .signatureDuration(Duration.ofMinutes(awsProperties.getS3().getSignatureDuration()))
                 .putObjectRequest(putObjectRequest)
                 .build();
 
@@ -184,13 +182,18 @@ public class AttachmentServiceImpl implements AttachmentService {
     public void deleteAttachment(Long attachmentId, Long projectId) throws S3ObjectNotFoundException {
         ProjectAttachment attachment = getProjectAttachmentOrElseThrow(attachmentId, projectId);
 
-        DeleteObjectRequest deleteObjectRequest = S3ProviderUtils.deleteObjectRequest(awsProperties.getS3().getBucket(), attachment);
+        DeleteObjectRequest deleteObjectRequest = S3ProviderUtils.deleteObjectRequest(awsProperties.getS3().getBucket(), attachment.getFilePath());
 
-        s3Client.deleteObject(deleteObjectRequest);
-        attachmentRepository.delete(attachment);
+        try {
+            s3Client.deleteObject(deleteObjectRequest);
+            log.info("Deleted attachment from S3: {}", attachment.getFilename());
+        } catch (Exception e) {
+            log.error("Failed to delete attachment from S3: {}", attachment.getFilename(), e);
+            throw new S3ObjectNotFoundException("Failed to delete attachment from S3: " + e.getMessage());
+        }
 
-        log.info("Deleted attachment {}", attachment.getFilename());
-        attachmentRepository.delete(attachment);
+        int deletedRows = attachmentRepository.deleteByProjectIdAndId(projectId, attachmentId);
+        log.info("Deleted {} rows from database for attachment: {}", deletedRows, attachment.getFilename());
     }
 
     @Override
@@ -204,7 +207,7 @@ public class AttachmentServiceImpl implements AttachmentService {
         List<GetAttachmentUrlResponse> urls = attachments.stream()
                 .map(attachment -> {
                     try {
-                        return new GetAttachmentUrlResponse(attachment.getId(), attachment.getFilename(), getObjectPresignedUrl(attachment));
+                        return new GetAttachmentUrlResponse(attachment.getId(), attachment.getFilename(), getObjectPresignedUrl(attachment), attachment.getFilesize());
                     } catch (Exception e) {
                         log.error("Failed to generate download URL for attachment: {}", attachment.getFilename(), e);
                         return null;
@@ -219,7 +222,7 @@ public class AttachmentServiceImpl implements AttachmentService {
     }
 
     private String getObjectPresignedUrl(ProjectAttachment attachment) {
-        GetObjectRequest getObjectRequest = S3ProviderUtils.getObjectRequest(awsProperties.getS3().getBucket(), attachment);
+        GetObjectRequest getObjectRequest = S3ProviderUtils.getObjectRequest(awsProperties.getS3().getBucket(), attachment.getFilePath());
 
         GetObjectPresignRequest presignRequest = S3ProviderUtils.getObjectPresignRequest(
                 getObjectRequest,
@@ -227,10 +230,6 @@ public class AttachmentServiceImpl implements AttachmentService {
 
         PresignedGetObjectRequest presignedRequest = s3Presigner.presignGetObject(presignRequest);
         return presignedRequest.url().toString();
-    }
-
-    private String generateKey(Long projectId, String fileName) {
-        return projectId + "/" + UUID.randomUUID() + "_" + fileName;
     }
 
     private ProjectAttachment getProjectAttachmentOrElseThrow(Long attachmentId, Long projectId) throws NoSuchProjectException, S3ObjectNotFoundException {

@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.client.HttpClientErrorException;
 import org.tasker.common.grpc.exception.GrpcException;
+import org.tasker.common.s3.exception.S3ObjectNotFoundException;
 
 import java.util.List;
 
@@ -54,6 +55,11 @@ public abstract class AbstractExceptionHandler {
     @ResponseBody
     public ResponseEntity<String> handleNotFoundTypeException(NotFoundTypeException e) {
         return ResponseEntity.status(e.getStatus()).body(e.getMessage());
+    }
+
+    @ExceptionHandler(S3ObjectNotFoundException.class)
+    public ResponseEntity<String> handleS3ObjectNotFoundException(S3ObjectNotFoundException ex) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
     }
 
     private String processValidationErrors(List<FieldError> errors) {

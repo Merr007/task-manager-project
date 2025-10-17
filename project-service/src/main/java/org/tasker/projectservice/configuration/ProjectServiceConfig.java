@@ -11,14 +11,19 @@ import org.tasker.common.grpc.UserServiceGrpc;
 import org.tasker.common.grpc.client.configuration.CommonGrpcClientConfig;
 import org.tasker.common.grpc.client.interceptor.JwtTokenGrpcClientInterceptor;
 import org.tasker.common.grpc.server.configuration.GrpcServerConfig;
+import org.tasker.common.s3.configuration.S3AwsConfig;
+import org.tasker.common.s3.properties.AwsProperties;
 
 @Configuration
 @Import({
         ClientConfig.class,
         GrpcServerConfig.class,
         CommonGrpcClientConfig.class,
+        AwsProperties.class,
+        S3AwsConfig.class
 })
 public class ProjectServiceConfig {
+
     @Value("${grpc.client.user-management-service.address}")
     private String userServiceUrl;
 

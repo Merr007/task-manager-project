@@ -12,15 +12,15 @@ import java.util.List;
 
 public interface TaskService {
 
-    CreateTaskResponse createTask(Long projectId, CreateTaskRequest request);
+    CreateTaskResponse createTask(CreateTaskRequest request);
 
-    void addAssignee(Long projectId, Long taskId, AddAssigneeRequest request);
+    void addAssignee(Long taskId, AddAssigneeRequest request);
 
-    void deleteTask(Long projectId, Long taskId);
+    void deleteTask(Long taskId);
 
-    GetTaskResponse getTask(Long projectId, Long taskId);
+    GetTaskResponse getTask(Long taskId);
 
     List<GetTaskResponse> getAllTasks(Pageable pageable, Long projectId, String taskTitle);
 
-    UpdateTaskResponse updateTask(Long projectId, Long taskId, UpdateTaskRequest request);
+    UpdateTaskResponse updateTask(Long taskId, UpdateTaskRequest request);
 }

@@ -34,13 +34,13 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     @Transactional
-    public CreateTaskResponse createTask(Long projectId, CreateTaskRequest request) throws NoSuchProjectForTaskException {
-        if (!grpcClientProjectService.existsByProjectId(projectId)) {
-            throw new NoSuchProjectForTaskException("No such project with id " + projectId);
+    public CreateTaskResponse createTask(CreateTaskRequest request) throws NoSuchProjectForTaskException {
+        if (!grpcClientProjectService.existsByProjectId(request.projectId())) {
+            throw new NoSuchProjectForTaskException("No such project with id " + request.projectId());
         }
 
         Task newTask = taskMapper.toTask(request);
-        newTask.setProjectId(projectId);
+        newTask.setProjectId(request.projectId());
 
         Task savedTask = taskRepository.save(newTask);
 
@@ -51,11 +51,11 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     @Transactional
-    public void addAssignee(Long projectId, Long taskId, AddAssigneeRequest request) throws NoSuchTaskException, GrpcException {
-        Task task = taskRepository.findByTaskIdAndProjectId(taskId, projectId)
+    public void addAssignee(Long taskId, AddAssigneeRequest request) throws NoSuchTaskException, GrpcException {
+        Task task = taskRepository.findById(taskId)
                 .orElseThrow(() -> new NoSuchTaskException("No such task with id " + taskId));
 
-        List<String> projectMembers = grpcClientProjectService.getProjectMembers(projectId);
+        List<String> projectMembers = grpcClientProjectService.getProjectMembers(task.getProjectId());
 
         if (!projectMembers.contains(request.assigneeId())) {
             throw new NoSuchMemberInProject("No such member in project");
@@ -68,8 +68,8 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     @Transactional
-    public void deleteTask(Long projectId, Long taskId) throws NoSuchTaskException {
-        taskRepository.findByTaskIdAndProjectId(taskId, projectId)
+    public void deleteTask(Long taskId) throws NoSuchTaskException {
+        taskRepository.findById(taskId)
                 .orElseThrow(() -> new NoSuchTaskException("No such task with id " + taskId));
 
         taskRepository.deleteById(taskId);
@@ -79,8 +79,8 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     @Transactional(readOnly = true)
-    public GetTaskResponse getTask(Long projectId, Long taskId) throws NoSuchTaskException {
-        Task task = taskRepository.findByTaskIdAndProjectId(taskId, projectId)
+    public GetTaskResponse getTask(Long taskId) throws NoSuchTaskException {
+        Task task = taskRepository.findById(taskId)
                 .orElseThrow(() -> new NoSuchTaskException("No such task with id " + taskId));
 
         return taskMapper.toGetTaskResponse(task);
@@ -100,8 +100,8 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     @Transactional
-    public UpdateTaskResponse updateTask(Long projectId, Long taskId, UpdateTaskRequest request) {
-        Task task = taskRepository.findByTaskIdAndProjectId(taskId, projectId)
+    public UpdateTaskResponse updateTask(Long taskId, UpdateTaskRequest request) {
+        Task task = taskRepository.findById(taskId)
                 .orElseThrow(() -> new NoSuchTaskException("No such task with id " + taskId));
 
         if (request.title() != null) {
